@@ -1,0 +1,3102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Менеджер РПЛ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0d47a1 0%, #b71c1c 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1450px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(to right, #0039a6, #d52b1e);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            border-bottom: 5px solid #fff;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            width: 400px;
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-right: 2px solid #ddd;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+        }
+
+        .club-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(to right, #f5f5f5, #e0e0e0);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .club-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            border: 3px solid #d52b1e;
+            overflow: hidden;
+            background-color: white;
+            padding: 8px;
+        }
+
+            .club-logo img {
+                width: auto;
+                height: auto;
+                max-width: 64px;
+                max-height: 64px;
+                object-fit: contain;
+            }
+
+        .club-details h2 {
+            color: #0039a6;
+            margin-bottom: 5px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .stat {
+            background-color: #0039a6;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .menu {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .menu li {
+            margin-bottom: 10px;
+        }
+
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .menu-btn:hover {
+            background-color: #0039a6;
+            color: white;
+        }
+
+        .menu-btn i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .menu-btn.active {
+            background-color: #0039a6;
+            color: white;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .screen-title {
+            color: #0039a6;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d52b1e;
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .player-card {
+            background: linear-gradient(to bottom, #f9f9f9, #eee);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #0039a6;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .player-name {
+            font-weight: bold;
+            color: #0039a6;
+        }
+
+        .player-rating {
+            background-color: #0039a6;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .player-details {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .player-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .stat-bar {
+            height: 6px;
+            background-color: #ddd;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background-color: #0039a6;
+            border-radius: 3px;
+        }
+
+        .tactics-pitch {
+            background-color: #4caf50;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            position: relative;
+            height: 500px;
+            background: linear-gradient(to bottom, #4caf50, #388e3c);
+            border: 2px solid white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .pitch-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+        }
+
+        .player-position {
+            width: 40px;
+            height: 40px;
+            background-color: #0039a6;
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .player-position:hover {
+            transform: scale(1.1);
+        }
+
+        .formation-selector {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .formation-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .formation-btn {
+            padding: 10px 15px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .formation-btn.active {
+            background-color: #0039a6;
+            color: white;
+        }
+
+        .match-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .team-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 15px;
+            border: 4px solid #d52b1e;
+            overflow: hidden;
+            position: relative;
+            background-color: white;
+        }
+
+            .team-logo img {
+                width: 85px; /* Фиксированная ширина */
+                height: 85px; /* Фиксированная высота */
+                object-fit: contain;
+                display: block;
+            }
+
+        .vs {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0039a6;
+            margin: 0 20px;
+        }
+
+        .score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #0039a6;
+            margin: 20px 0;
+        }
+
+        .match-controls {
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background-color: #0039a6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 0 10px;
+        }
+
+        .btn:hover {
+            background-color: #002b7d;
+            transform: translateY(-2px);
+        }
+
+        .btn-play {
+            background-color: #d52b1e;
+        }
+
+        .btn-play:hover {
+            background-color: #b71c1c;
+        }
+
+        .match-events {
+            margin-top: 30px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .event {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        .event i {
+            margin-right: 10px;
+            color: #0039a6;
+        }
+
+        .league-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .league-table th, .league-table td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        .league-table thead {
+            background-color: #0039a6;
+            color: white;
+        }
+
+        .league-table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .league-table tbody tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        .league-table tbody tr:first-child {
+            background-color: #fff9c4;
+        }
+
+        .league-table tbody tr:nth-child(2) {
+            background-color: #e1f5fe;
+        }
+
+        .league-table tbody tr:nth-child(3) {
+            background-color: #e8f5e9;
+        }
+
+        .league-table tbody tr:nth-last-child(-n+2) {
+            background-color: #ffebee;
+        }
+
+        .transfer-list {
+            margin-top: 20px;
+        }
+
+        .transfer-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .finance-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .finance-card {
+            background: linear-gradient(to right, #0039a6, #1976d2);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .finance-card h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .finance-card h3 i {
+            margin-right: 10px;
+        }
+
+        .finance-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .finance-change {
+            font-size: 0.9rem;
+        }
+
+        .positive {
+            color: #a5d6a7;
+        }
+
+        .negative {
+            color: #ef9a9a;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #666;
+            border-top: 2px solid #ddd;
+        }
+
+        /* Новые стили для выбора команды */
+        .team-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .team-card {
+            background: linear-gradient(to bottom, #f9f9f9, #eee);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-card.selected {
+            border: 3px solid #0039a6;
+        }
+
+        .team-card-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.8rem;
+            color: white;
+            border: 2px solid #d52b1e;
+            overflow: hidden;
+            position: relative;
+            background-color: white;
+        }
+
+            .team-card-logo img {
+                width: 70px; /* Фиксированная ширина */
+                height: 70px; /* Фиксированная высота */
+                object-fit: contain;
+                display: block;
+            }
+
+        .team-card-name {
+            font-weight: bold;
+            color: #0039a6;
+            margin-bottom: 10px;
+        }
+
+        .team-card-budget {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Стили для календаря */
+        .calendar {
+            margin-top: 20px;
+        }
+
+        .match-day {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: linear-gradient(to right, #f5f5f5, #e0e0e0);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .match-date {
+            font-weight: bold;
+            color: #0039a6;
+            width: 100px;
+        }
+
+        .match-teams {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .match-result {
+            font-weight: bold;
+            color: #0039a6;
+            width: 60px;
+            text-align: center;
+        }
+
+        /* Стили для трансферов */
+        .transfer-market {
+            margin-top: 20px;
+        }
+
+        .transfer-player-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: linear-gradient(to right, #f5f5f5, #e0e0e0);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .transfer-player-info {
+            flex: 1;
+        }
+
+        .transfer-player-price {
+            font-weight: bold;
+            color: #0039a6;
+            margin: 0 15px;
+        }
+
+        .btn-buy {
+            background-color: #4caf50;
+        }
+
+        .btn-buy:hover {
+            background-color: #388e3c;
+        }
+
+        /* Стили для модальных окон */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            color: #0039a6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Стили для главного меню */
+        .main-menu {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .main-menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 40px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .main-menu-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+        }
+
+        /* Стили для стадиона */
+        .stadium-card {
+            background: linear-gradient(to right, #0039a6, #1976d2);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .stadium-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stadium-level {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .stadium-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stadium-stat {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .stadium-upgrades {
+            margin-top: 20px;
+        }
+
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* Стили для плей-офф */
+        .playoff-bracket {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .playoff-round {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .round-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #0039a6;
+        }
+
+        .playoff-match {
+            background: linear-gradient(to right, #f5f5f5, #e0e0e0);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .playoff-team {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+        }
+
+        .playoff-team.winner {
+            font-weight: bold;
+            color: #0039a6;
+        }
+
+        .playoff-score {
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .season-info {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: #0039a6;
+            font-weight: bold;
+        }
+
+        /* Стили для вкладок трансферного рынка */
+        .transfer-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .transfer-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f5f5f5;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+
+        .transfer-tab.active {
+            background-color: #0039a6;
+            color: white;
+        }
+
+        /* Стили для обмена игроками */
+        .transfer-exchange {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .exchange-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .exchange-team {
+            flex: 1;
+            padding: 15px;
+            background: linear-gradient(to right, #f5f5f5, #e0e0e0);
+            border-radius: 10px;
+        }
+
+        .exchange-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #0039a6;
+            font-weight: bold;
+        }
+
+        .exchange-select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .exchange-money {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .exchange-money input {
+            width: 100px;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 2px solid #ddd;
+            }
+            
+            .teams {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .team-selection {
+                grid-template-columns: 1fr;
+            }
+            
+            .stadium-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .playoff-bracket {
+                flex-direction: column;
+            }
+            
+            .exchange-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Менеджер РПЛ</h1>
+            <div class="subtitle">Футбольный менеджер Российской Премьер-Лиги</div>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="club-info">
+                    <div class="club-logo" id="current-team-logo">
+                        <img src="" alt="Логотип команды" id="current-team-logo-img">
+                    </div>
+                    <div class="club-details">
+                        <h2 id="current-team-name">Выберите команду</h2>
+                        <div class="stats">
+                            <div class="stat">Бюджет: <span id="current-budget">0</span>M €</div>
+                            <div class="stat">Место: <span id="current-position">-</span>-е</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <ul class="menu">
+                    <li><div class="menu-btn active" data-screen="squad"><i class="fas fa-users"></i> Состав</div></li>
+                    <li><div class="menu-btn" data-screen="tactics"><i class="fas fa-chart-line"></i> Тактика</div></li>
+                    <li><div class="menu-btn" data-screen="transfers"><i class="fas fa-exchange-alt"></i> Трансферы</div></li>
+                    <li><div class="menu-btn" data-screen="stadium"><i class="fas fa-landmark"></i> Стадион</div></li>
+                    <li><div class="menu-btn" data-screen="calendar"><i class="fas fa-calendar-alt"></i> Календарь</div></li>
+                    <li><div class="menu-btn" data-screen="playoffs"><i class="fas fa-trophy"></i> Плей-офф</div></li>
+                    <li><div class="menu-btn" data-screen="finance"><i class="fas fa-money-bill-wave"></i> Финансы</div></li>
+                    <li><div class="menu-btn" data-screen="match"><i class="fas fa-futbol"></i> Следующий матч</div></li>
+                </ul>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="btn" id="save-game"><i class="fas fa-save"></i> Сохранить игру</button>
+                    <button class="btn" id="load-game" style="margin-top: 10px;"><i class="fas fa-download"></i> Загрузить игру</button>
+                    <button class="btn" id="main-menu-btn" style="margin-top: 10px; background-color: #d52b1e;"><i class="fas fa-home"></i> Главное меню</button>
+                </div>
+            </div>
+            
+            <div class="content">
+                <!-- Главное меню -->
+                <div class="screen active" id="main-menu">
+                    <div class="main-menu">
+                        <h2 class="screen-title">Добро пожаловать в Менеджер РПЛ</h2>
+                        <p>Выберите действие для продолжения</p>
+                        
+                        <div class="main-menu-buttons">
+                            <button class="btn main-menu-btn" id="new-game-btn"><i class="fas fa-plus"></i> Новая игра</button>
+                            <button class="btn main-menu-btn" id="load-game-btn"><i class="fas fa-download"></i> Загрузить игру</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Экран выбора команды -->
+                <div class="screen" id="team-selection">
+                    <h2 class="screen-title">Выберите футбольный клуб</h2>
+                    <p>Выберите команду, которой вы будете управлять в сезоне РПЛ</p>
+                    
+                    <div class="team-selection" id="teams-container">
+                        <!-- Команды будут добавлены через JavaScript -->
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="btn" id="start-game">Начать игру</button>
+                        <button class="btn" id="back-to-menu" style="margin-left: 10px; background-color: #d52b1e;">Назад в меню</button>
+                    </div>
+                </div>
+                
+                <!-- Экран состава -->
+                <div class="screen" id="squad">
+                    <h2 class="screen-title">Состав команды</h2>
+                    <div class="players-grid" id="players-container">
+                        <!-- Игроки будут добавлены через JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Экран тактики -->
+                <div class="screen" id="tactics">
+                    <h2 class="screen-title">Тактика</h2>
+                    
+                    <div class="formation-selector">
+                        <h3>Выберите формацию:</h3>
+                        <div class="formation-options">
+                            <div class="formation-btn active" data-formation="4-4-2">4-4-2</div>
+                            <div class="formation-btn" data-formation="4-3-3">4-3-3</div>
+                            <div class="formation-btn" data-formation="4-2-3-1">4-2-3-1</div>
+                            <div class="formation-btn" data-formation="3-5-2">3-5-2</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tactics-pitch" id="pitch">
+                        <div class="pitch-lines"></div>
+                        <!-- Позиции игроков будут добавлены через JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Экран трансферов -->
+                <div class="screen" id="transfers">
+                    <h2 class="screen-title">Трансферный рынок</h2>
+                    
+                    <div class="transfer-tabs">
+                        <div class="transfer-tab active" data-tab="market">Трансферный рынок</div>
+                        <div class="transfer-tab" data-tab="exchange">Обмен с клубами</div>
+                    </div>
+                    
+                    <!-- Трансферный рынок -->
+                    <div id="transfer-market-tab">
+                        <div class="transfer-filters">
+                            <select class="filter-select" id="position-filter">
+                                <option value="all">Все позиции</option>
+                                <option value="GK">Вратарь</option>
+                                <option value="DEF">Защитник</option>
+                                <option value="MID">Полузащитник</option>
+                                <option value="ATT">Нападающий</option>
+                            </select>
+                            
+                            <select class="filter-select" id="price-filter">
+                                <option value="all">Любая цена</option>
+                                <option value="0-1">До 1M €</option>
+                                <option value="1-3">1M - 3M €</option>
+                                <option value="3-5">3M - 5M €</option>
+                                <option value="5-10">5M - 10M €</option>
+                                <option value="10+">Более 10M €</option>
+                            </select>
+                        </div>
+                        
+                        <div class="transfer-market" id="transfer-players-container">
+                            <!-- Игроки трансферного рынка будут добавлены через JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Обмен с клубами -->
+                    <div id="transfer-exchange-tab" class="transfer-exchange">
+                        <div class="exchange-container">
+                            <div class="exchange-team">
+                                <div class="exchange-title">Ваша команда</div>
+                                <select class="exchange-select" id="my-team-select">
+                                    <option value="">Выберите игрока для обмена</option>
+                                </select>
+                                <div class="exchange-money">
+                                    <span>Доплата:</span>
+                                    <input type="number" id="my-team-money" min="0" value="0"> M €
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-exchange-alt" style="font-size: 2rem; color: #0039a6;"></i>
+                            </div>
+                            
+                            <div class="exchange-team">
+                                <div class="exchange-title">Команда соперника</div>
+                                <select class="exchange-select" id="opponent-team-select">
+                                    <option value="">Выберите команду</option>
+                                </select>
+                                <select class="exchange-select" id="opponent-player-select">
+                                    <option value="">Выберите игрока</option>
+                                </select>
+                                <div class="exchange-money">
+                                    <span>Доплата:</span>
+                                    <input type="number" id="opponent-team-money" min="0" value="0"> M €
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <button class="btn" id="propose-exchange">Предложить обмен</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Экран стадиона -->
+                <div class="screen" id="stadium">
+                    <h2 class="screen-title">Стадион</h2>
+                    
+                    <div class="stadium-card">
+                        <div class="stadium-info">
+                            <h3 id="stadium-name">Стадион</h3>
+                            <div class="stadium-level">Уровень: <span id="stadium-level">1</span></div>
+                        </div>
+                        
+                        <div class="stadium-stats">
+                            <div class="stadium-stat">
+                                <div>Вместимость: <span id="stadium-capacity">25000</span></div>
+                                <div class="stat-bar"><div class="stat-fill" style="width: 50%"></div></div>
+                            </div>
+                            <div class="stadium-stat">
+                                <div>Комфорт: <span id="stadium-comfort">50</span>%</div>
+                                <div class="stat-bar"><div class="stat-fill" style="width: 50%"></div></div>
+                            </div>
+                            <div class="stadium-stat">
+                                <div>Доход с билетов: <span id="stadium-income">100K</span> €/матч</div>
+                                <div class="stat-bar"><div class="stat-fill" style="width: 50%"></div></div>
+                            </div>
+                            <div class="stadium-stat">
+                                <div>Рейтинг: <span id="stadium-rating">3</span>/5</div>
+                                <div class="stat-bar"><div class="stat-fill" style="width: 60%"></div></div>
+                            </div>
+                        </div>
+                        
+                        <div class="stadium-upgrades">
+                            <h3>Улучшения стадиона:</h3>
+                            <div class="upgrade-item">
+                                <div>Увеличить вместимость (+5000)</div>
+                                <button class="btn btn-buy" data-upgrade="capacity">500K €</button>
+                            </div>
+                            <div class="upgrade-item">
+                                <div>Улучшить комфорт (+10%)</div>
+                                <button class="btn btn-buy" data-upgrade="comfort">300K €</button>
+                            </div>
+                            <div class="upgrade-item">
+                                <div>Улучшить рейтинг (+0.5)</div>
+                                <button class="btn btn-buy" data-upgrade="rating">400K €</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Экран календаря -->
+                <div class="screen" id="calendar">
+                    <div class="season-info">Сезон: <span id="current-season">2025</span></div>
+                    <h2 class="screen-title">Календарь матчей</h2>
+                    
+                    <div class="calendar" id="matches-container">
+                        <!-- Матчи будут добавлены через JavaScript -->
+                    </div>
+                    
+                    <h3 class="screen-title" style="margin-top: 30px;">Турнирная таблица</h3>
+                    
+                    <table class="league-table" id="league-table">
+                        <thead>
+                            <tr>
+                                <th>Поз</th>
+                                <th>Команда</th>
+                                <th>И</th>
+                                <th>В</th>
+                                <th>Н</th>
+                                <th>П</th>
+                                <th>ЗМ</th>
+                                <th>ПМ</th>
+                                <th>РМ</th>
+                                <th>О</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Данные таблицы будут добавлены через JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Экран плей-офф -->
+                <div class="screen" id="playoffs">
+                    <div class="season-info">Сезон: <span id="playoff-season">2025</span></div>
+                    <h2 class="screen-title">Кубок России - Плей-офф</h2>
+                    
+                    <div class="playoff-bracket" id="playoff-bracket">
+                        <!-- Сетка плей-офф будет добавлена через JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Экран финансов -->
+                <div class="screen" id="finance">
+                    <h2 class="screen-title">Финансы клуба</h2>
+                    
+                    <div class="finance-cards">
+                        <div class="finance-card">
+                            <h3><i class="fas fa-wallet"></i> Бюджет</h3>
+                            <div class="finance-value" id="finance-budget">0 €</div>
+                            <div class="finance-change positive" id="finance-budget-change">+0 € за месяц</div>
+                        </div>
+                        
+                        <div class="finance-card">
+                            <h3><i class="fas fa-money-bill"></i> Зарплатный фонд</h3>
+                            <div class="finance-value" id="finance-salary">0 €</div>
+                            <div class="finance-change negative" id="finance-salary-change">-0 € за месяц</div>
+                        </div>
+                        
+                        <div class="finance-card">
+                            <h3><i class="fas fa-trophy"></i> Призовые</h3>
+                            <div class="finance-value" id="finance-prize">0 €</div>
+                            <div class="finance-change positive" id="finance-prize-change">+0 € за месяц</div>
+                        </div>
+
+                        <div class="finance-card">
+                            <h3><i class="fas fa-ticket-alt"></i> Доход с билетов</h3>
+                            <div class="finance-value" id="finance-ticket">0 €</div>
+                            <div class="finance-change positive" id="finance-ticket-change">+0 € за месяц</div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="screen-title" style="margin-top: 30px;">Финансовые операции</h3>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn" id="request-budget"><i class="fas fa-hand-holding-usd"></i> Запросить увеличение бюджета</button>
+                        <p style="margin-top: 10px; font-size: 0.9rem;">Увеличивайте бюджет, показывая хорошие результаты в матчах</p>
+                    </div>
+                </div>
+                
+                <!-- Экран матча -->
+                <div class="screen" id="match">
+                    <h2 class="screen-title">Следующий матч</h2>
+                    
+                    <div class="match-container">
+                        <div class="teams">
+                            <div class="team">
+                                <div class="team-logo" id="home-team-logo">
+                                    <img src="" alt="Хозяева" id="home-team-logo-img">
+                                </div>
+                                <div class="team-name" id="home-team-name">Команда</div>
+                            </div>
+                            
+                            <div class="vs">VS</div>
+                            
+                            <div class="team">
+                                <div class="team-logo" id="away-team-logo">
+                                    <img src="" alt="Гости" id="away-team-logo-img">
+                                </div>
+                                <div class="team-name" id="away-team-name">Команда</div>
+                            </div>
+                        </div>
+                        
+                        <div class="score" id="match-score">0 : 0</div>
+                        
+                        <div class="match-controls">
+                            <button class="btn btn-play" id="play-match">Играть матч</button>
+                            <button class="btn" id="simulate-match">Быстрая симуляция</button>
+                        </div>
+                        
+                        <div class="match-events" id="match-events">
+                            <div class="event"><i class="fas fa-info-circle"></i> Матч скоро начнется</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Менеджер РПЛ © 2023 | Российская Премьер-Лига</p>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 class="modal-title" id="modal-title">Заголовок</h2>
+            <p id="modal-message">Сообщение</p>
+            <div class="modal-buttons">
+                <button class="btn" id="modal-confirm">OK</button>
+                <button class="btn" id="modal-cancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Игровые данные
+        const gameData = {
+            teams: [
+                { 
+                    id: 'zenit', 
+                    name: 'Зенит', 
+                    logo: 'https://img.championat.com/team/logo/14658385841081757673.png', 
+                    budget: 5.2, 
+                    position: 1,
+                    stadium: {
+                        name: 'Газпром Арена',
+                        level: 1,
+                        capacity: 45300,
+                        comfort: 70,
+                        income: 1200000,
+                        rating: 4.5
+                    }
+                },
+                { 
+                    id: 'spartak', 
+                    name: 'Спартак', 
+                    logo: 'https://img.championat.com/team/logo/16523023911931541032.png', 
+                    budget: 4.1, 
+                    position: 2,
+                    stadium: {
+                        name: 'Открытие Банк Арена',
+                        level: 1,
+                        capacity: 45360,
+                        comfort: 65,
+                        income: 1000000,
+                        rating: 4.0
+                    }
+                },
+                { 
+                    id: 'cska', 
+                    name: 'ЦСКА', 
+                    logo: 'https://img.championat.com/team/logo/1465837941322079237.png', 
+                    budget: 3.8, 
+                    position: 3,
+                    stadium: {
+                        name: 'ВЭБ Арена',
+                        level: 1,
+                        capacity: 30000,
+                        comfort: 75,
+                        income: 900000,
+                        rating: 4.2
+                    }
+                },
+                { 
+                    id: 'dinamo', 
+                    name: 'Динамо', 
+                    logo: 'https://img.championat.com/team/logo/1465838729886051809.png', 
+                    budget: 3.5, 
+                    position: 4,
+                    stadium: {
+                        name: 'ВТБ Арена',
+                        level: 1,
+                        capacity: 26000,
+                        comfort: 80,
+                        income: 800000,
+                        rating: 4.3
+                    }
+                },
+                { 
+                    id: 'krasnodar', 
+                    name: 'Краснодар', 
+                    logo: 'https://img.championat.com/team/logo/14676324111013772033.png', 
+                    budget: 3.2, 
+                    position: 5,
+                    stadium: {
+                        name: 'Стадион Краснодар',
+                        level: 1,
+                        capacity: 35179,
+                        comfort: 85,
+                        income: 750000,
+                        rating: 4.6
+                    }
+                },
+                { 
+                    id: 'lokomotiv', 
+                    name: 'Локомотив', 
+                    logo: 'https://img.championat.com/team/logo/14658384771344549206.png', 
+                    budget: 3.0, 
+                    position: 6,
+                    stadium: {
+                        name: 'РЖД Арена',
+                        level: 1,
+                        capacity: 27220,
+                        comfort: 70,
+                        income: 700000,
+                        rating: 4.1
+                    }
+                },
+                { 
+                    id: 'rostov', 
+                    name: 'Ростов', 
+                    logo: 'https://img.championat.com/team/logo/14658384351941932061.png', 
+                    budget: 2.8, 
+                    position: 7,
+                    stadium: {
+                        name: 'Ростов Арена',
+                        level: 1,
+                        capacity: 45000,
+                        comfort: 75,
+                        income: 650000,
+                        rating: 4.0
+                    }
+                },
+                { 
+                    id: 'akhmat', 
+                    name: 'Ахмат', 
+                    logo: 'https://img.championat.com/team/logo/1501229909577937100.png', 
+                    budget: 2.5, 
+                    position: 8,
+                    stadium: {
+                        name: 'Ахмат-Арена',
+                        level: 1,
+                        capacity: 30500,
+                        comfort: 70,
+                        income: 600000,
+                        rating: 3.9
+                    }
+                },
+                { 
+                    id: 'sochi', 
+                    name: 'Сочи', 
+                    logo: 'https://img.championat.com/team/logo/1531215018203072749.png', 
+                    budget: 2.7, 
+                    position: 9,
+                    stadium: {
+                        name: 'Фишт',
+                        level: 1,
+                        capacity: 47700,
+                        comfort: 85,
+                        income: 700000,
+                        rating: 4.3
+                    }
+                },
+                {
+                    id: 'dinamo-m',
+                    name: 'Динамо Мх',
+                    logo: 'https://фк-лого.рф/wp-content/uploads/dynamo-makhachkala-logo-145x100.png',
+                    budget: 2.1,
+                    position: 10,
+                    stadium: {
+                        name: 'Динамо',
+                        level: 1,
+                        capacity: 15000,
+                        comfort: 65,
+                        income: 500000,
+                        rating: 3.7
+                    }
+                },
+                { 
+                    id: 'nizhny', 
+                    name: 'Нижний Новгород', 
+                    logo: 'https://img.championat.com/team/logo/1531481481507005825.png', 
+                    budget: 2.1, 
+                    position: 11,
+                    stadium: {
+                        name: 'Нижний Новгород',
+                        level: 1,
+                        capacity: 45000,
+                        comfort: 70,
+                        income: 500000,
+                        rating: 3.9
+                    }
+                },
+                { 
+                    id: 'orenburg', 
+                    name: 'Оренбург', 
+                    logo: 'https://фк-лого.рф/wp-content/uploads/orenburg-logo-145x100.png', 
+                    budget: 2.0, 
+                    position: 12,
+                    stadium: {
+                        name: 'Газовик',
+                        level: 1,
+                        capacity: 7500,
+                        comfort: 60,
+                        income: 400000,
+                        rating: 3.5
+                    }
+                },
+                {
+                    id: 'rubin',
+                    name: 'Рубин',
+                    logo: 'https://фк-лого.рф/wp-content/uploads/rubin-logo-145x100.png',
+                    budget: 2.2,
+                    position: 13,
+                    stadium: {
+                        name: 'Казань Арена',
+                        level: 1,
+                        capacity: 45379,
+                        comfort: 80,
+                        income: 700000,
+                        rating: 4.2
+                    }
+                },
+                { 
+                    id: 'krylia', 
+                    name: 'Крылья Советов', 
+                    logo: 'https://img.championat.com/team/logo/1465838512157254062.png', 
+                    budget: 2.4, 
+                    position: 14,
+                    stadium: {
+                        name: 'Солидарность Самара Арена',
+                        level: 1,
+                        capacity: 45000,
+                        comfort: 75,
+                        income: 600000,
+                        rating: 4.0
+                    }
+                },
+                { 
+                    id: 'baltica', 
+                    name: 'Балтика', 
+                    logo: 'https://фк-лого.рф/wp-content/uploads/baltika-logo-2022-145x100.png', 
+                    budget: 1.9, 
+                    position: 15,
+                    stadium: {
+                        name: 'Ростов Арена',
+                        level: 1,
+                        capacity: 35000,
+                        comfort: 70,
+                        income: 480000,
+                        rating: 3.7
+                    }
+                },
+                {
+                    id: 'akron',
+                    name: 'Акрон',
+                    logo: 'https://фк-лого.рф/wp-content/uploads/akron-logo-145x100.png',
+                    budget: 1.9,
+                    position: 16,
+                    stadium: {
+                        name: 'Кристалл',
+                        level: 1,
+                        capacity: 15000,
+                        comfort: 70,
+                        income: 400000,
+                        rating: 3.6
+                    }
+                }
+            ],
+            players: [
+                // Зенит
+                { id: 1, name: 'А. Дзюба', position: 'ATT', rating: 87, age: 33, nationality: 'Россия', attack: 89, defense: 45, form: 8, salary: 0.2, value: 3.5, team: 'zenit' },
+                { id: 2, name: 'М. Оздоев', position: 'MID', rating: 82, age: 29, nationality: 'Россия', attack: 75, defense: 78, form: 7, salary: 0.15, value: 2.8, team: 'zenit' },
+                { id: 3, name: 'Д. Чистяков', position: 'DEF', rating: 81, age: 27, nationality: 'Россия', attack: 60, defense: 83, form: 9, salary: 0.12, value: 2.5, team: 'zenit' },
+                { id: 4, name: 'В. Караваев', position: 'DEF', rating: 80, age: 26, nationality: 'Россия', attack: 65, defense: 80, form: 8, salary: 0.1, value: 2.2, team: 'zenit' },
+                { id: 5, name: 'В. Бабурин', position: 'GK', rating: 83, age: 31, nationality: 'Россия', attack: 20, defense: 84, form: 8, salary: 0.18, value: 3.0, team: 'zenit' },
+                { id: 6, name: 'В. Сергеев', position: 'DEF', rating: 79, age: 28, nationality: 'Россия', attack: 55, defense: 81, form: 7, salary: 0.09, value: 1.8, team: 'zenit' },
+                { id: 7, name: 'А. Ерохин', position: 'MID', rating: 81, age: 32, nationality: 'Россия', attack: 78, defense: 72, form: 8, salary: 0.14, value: 2.5, team: 'zenit' },
+                { id: 8, name: 'К. Шатов', position: 'MID', rating: 80, age: 31, nationality: 'Россия', attack: 76, defense: 70, form: 7, salary: 0.13, value: 2.3, team: 'zenit' },
+                
+                // Спартак
+                { id: 9, name: 'А. Соболев', position: 'ATT', rating: 82, age: 25, nationality: 'Россия', attack: 84, defense: 38, form: 7, salary: 0.13, value: 2.7, team: 'spartak' },
+                { id: 10, name: 'К. Баранов', position: 'MID', rating: 79, age: 28, nationality: 'Россия', attack: 72, defense: 75, form: 8, salary: 0.1, value: 2.0, team: 'spartak' },
+                { id: 11, name: 'Г. Джикия', position: 'DEF', rating: 83, age: 29, nationality: 'Россия', attack: 55, defense: 85, form: 8, salary: 0.14, value: 2.6, team: 'spartak' },
+                { id: 12, name: 'А. Максименко', position: 'GK', rating: 81, age: 24, nationality: 'Россия', attack: 20, defense: 82, form: 8, salary: 0.11, value: 2.2, team: 'spartak' },
+                { id: 13, name: 'Р. Зобнин', position: 'MID', rating: 82, age: 28, nationality: 'Россия', attack: 74, defense: 79, form: 8, salary: 0.15, value: 2.7, team: 'spartak' },
+                { id: 14, name: 'Д. Ларссон', position: 'MID', rating: 80, age: 25, nationality: 'Швеция', attack: 79, defense: 68, form: 7, salary: 0.16, value: 2.8, team: 'spartak' },
+                { id: 15, name: 'Ж. Айртон', position: 'DEF', rating: 78, age: 29, nationality: 'Бразилия', attack: 65, defense: 79, form: 7, salary: 0.12, value: 2.1, team: 'spartak' },
+                { id: 16, name: 'А. Пруцеус', position: 'MID', rating: 77, age: 26, nationality: 'Россия', attack: 73, defense: 74, form: 7, salary: 0.09, value: 1.7, team: 'spartak' },
+                
+                // ЦСКА
+                { id: 17, name: 'И. Акинфеев', position: 'GK', rating: 85, age: 36, nationality: 'Россия', attack: 20, defense: 88, form: 9, salary: 0.16, value: 3.0, team: 'cska' },
+                { id: 18, name: 'М. Федорчук', position: 'MID', rating: 80, age: 30, nationality: 'Россия', attack: 76, defense: 74, form: 8, salary: 0.12, value: 2.3, team: 'cska' },
+                { id: 19, name: 'Х. Байрамян', position: 'MID', rating: 81, age: 29, nationality: 'Армения', attack: 78, defense: 70, form: 8, salary: 0.13, value: 2.4, team: 'cska' },
+                { id: 20, name: 'И. Обляков', position: 'MID', rating: 82, age: 24, nationality: 'Россия', attack: 80, defense: 72, form: 8, salary: 0.14, value: 2.6, team: 'cska' },
+                { id: 21, name: 'В. Зайцев', position: 'DEF', rating: 79, age: 26, nationality: 'Россия', attack: 60, defense: 80, form: 7, salary: 0.1, value: 2.0, team: 'cska' },
+                { id: 22, name: 'К. Нбаба', position: 'DEF', rating: 78, age: 27, nationality: 'Франция', attack: 62, defense: 79, form: 7, salary: 0.11, value: 2.1, team: 'cska' },
+                { id: 23, name: 'Ф. Чалов', position: 'ATT', rating: 83, age: 24, nationality: 'Россия', attack: 84, defense: 40, form: 8, salary: 0.15, value: 2.8, team: 'cska' },
+                { id: 24, name: 'А. Гайч', position: 'DEF', rating: 80, age: 29, nationality: 'Хорватия', attack: 58, defense: 82, form: 8, salary: 0.13, value: 2.4, team: 'cska' },
+                
+                // Динамо
+                { id: 25, name: 'А. Шунин', position: 'GK', rating: 84, age: 30, nationality: 'Россия', attack: 20, defense: 86, form: 8, salary: 0.15, value: 2.9, team: 'dinamo' },
+                { id: 26, name: 'Д. Скопинцев', position: 'DEF', rating: 79, age: 26, nationality: 'Россия', attack: 65, defense: 80, form: 7, salary: 0.1, value: 2.0, team: 'dinamo' },
+                { id: 27, name: 'С. Паршивлюк', position: 'DEF', rating: 80, age: 33, nationality: 'Россия', attack: 60, defense: 81, form: 8, salary: 0.12, value: 2.2, team: 'dinamo' },
+                { id: 28, name: 'К. Тюкавин', position: 'ATT', rating: 81, age: 20, nationality: 'Россия', attack: 82, defense: 38, form: 8, salary: 0.09, value: 2.5, team: 'dinamo' },
+                { id: 29, name: 'Д. Фомин', position: 'MID', rating: 80, age: 26, nationality: 'Россия', attack: 77, defense: 73, form: 8, salary: 0.11, value: 2.3, team: 'dinamo' },
+                { id: 30, name: 'С. Смолов', position: 'ATT', rating: 82, age: 32, nationality: 'Россия', attack: 83, defense: 42, form: 7, salary: 0.16, value: 2.7, team: 'dinamo' },
+                { id: 31, name: 'Н. Морозов', position: 'DEF', rating: 78, age: 23, nationality: 'Россия', attack: 58, defense: 79, form: 7, salary: 0.08, value: 1.8, team: 'dinamo' },
+                { id: 32, name: 'А. Шиманьский', position: 'MID', rating: 81, age: 27, nationality: 'Польша', attack: 79, defense: 70, form: 8, salary: 0.14, value: 2.6, team: 'dinamo' },
+                
+                // Краснодар
+                { id: 33, name: 'М. Сафонов', position: 'GK', rating: 83, age: 23, nationality: 'Россия', attack: 20, defense: 85, form: 8, salary: 0.13, value: 2.8, team: 'krasnodar' },
+                { id: 34, name: 'А. Черников', position: 'DEF', rating: 79, age: 25, nationality: 'Россия', attack: 62, defense: 80, form: 7, salary: 0.1, value: 2.1, team: 'krasnodar' },
+                { id: 35, name: 'К. Оласаун', position: 'ATT', rating: 80, age: 26, nationality: 'Нигерия', attack: 81, defense: 45, form: 7, salary: 0.12, value: 2.4, team: 'krasnodar' },
+                { id: 36, name: 'Ю. Газинский', position: 'MID', rating: 81, age: 32, nationality: 'Россия', attack: 75, defense: 78, form: 8, salary: 0.14, value: 2.5, team: 'krasnodar' },
+                { id: 37, name: 'В. Литвинов', position: 'DEF', rating: 78, age: 24, nationality: 'Россия', attack: 60, defense: 79, form: 7, salary: 0.09, value: 1.9, team: 'krasnodar' },
+                { id: 38, name: 'И. Игнатьев', position: 'ATT', rating: 79, age: 23, nationality: 'Россия', attack: 80, defense: 40, form: 7, salary: 0.1, value: 2.2, team: 'krasnodar' },
+                { id: 39, name: 'Р. Кабелла', position: 'MID', rating: 82, age: 32, nationality: 'Франция', attack: 82, defense: 68, form: 8, salary: 0.17, value: 2.9, team: 'krasnodar' },
+                { id: 40, name: 'С. Петров', position: 'DEF', rating: 80, age: 31, nationality: 'Россия', attack: 58, defense: 81, form: 8, salary: 0.12, value: 2.3, team: 'krasnodar' },
+                
+                // Локомотив
+                { id: 41, name: 'Г. Маринаджи', position: 'GK', rating: 82, age: 35, nationality: 'Россия', attack: 20, defense: 83, form: 8, salary: 0.14, value: 2.6, team: 'lokomotiv' },
+                { id: 42, name: 'Д. Баринов', position: 'MID', rating: 83, age: 25, nationality: 'Россия', attack: 76, defense: 81, form: 8, salary: 0.15, value: 2.8, team: 'lokomotiv' },
+                { id: 43, name: 'Ф. Смолов', position: 'ATT', rating: 82, age: 32, nationality: 'Россия', attack: 83, defense: 43, form: 7, salary: 0.16, value: 2.7, team: 'lokomotiv' },
+                { id: 44, name: 'М. Рыбус', position: 'MID', rating: 80, age: 28, nationality: 'Польша', attack: 78, defense: 72, form: 8, salary: 0.13, value: 2.4, team: 'lokomotiv' },
+                { id: 45, name: 'С. Магкеев', position: 'DEF', rating: 79, age: 24, nationality: 'Россия', attack: 60, defense: 80, form: 7, salary: 0.1, value: 2.1, team: 'lokomotiv' },
+                { id: 46, name: 'А. Силва', position: 'DEF', rating: 80, age: 29, nationality: 'Португалия', attack: 62, defense: 81, form: 8, salary: 0.12, value: 2.3, team: 'lokomotiv' },
+                { id: 47, name: 'А. Миранчук', position: 'MID', rating: 82, age: 26, nationality: 'Россия', attack: 81, defense: 70, form: 8, salary: 0.15, value: 2.8, team: 'lokomotiv' },
+                { id: 48, name: 'В. Игнатьев', position: 'DEF', rating: 78, age: 28, nationality: 'Россия', attack: 65, defense: 79, form: 7, salary: 0.11, value: 2.0, team: 'lokomotiv' },
+
+                // Ростов
+                { id: 49, name: 'С. Песьяков', position: 'GK', rating: 80, age: 32, nationality: 'Россия', attack: 20, defense: 81, form: 7, salary: 0.11, value: 2.0, team: 'rostov' },
+                { id: 50, name: 'Д. Глебов', position: 'MID', rating: 81, age: 26, nationality: 'Россия', attack: 77, defense: 75, form: 8, salary: 0.12, value: 2.3, team: 'rostov' },
+                { id: 51, name: 'Н. Комличенко', position: 'ATT', rating: 79, age: 25, nationality: 'Россия', attack: 80, defense: 40, form: 7, salary: 0.1, value: 2.1, team: 'rostov' },
+                { id: 52, name: 'М. Осипенко', position: 'DEF', rating: 78, age: 27, nationality: 'Россия', attack: 58, defense: 79, form: 7, salary: 0.09, value: 1.8, team: 'rostov' },
+                { id: 53, name: 'А. Ионов', position: 'MID', rating: 79, age: 33, nationality: 'Россия', attack: 76, defense: 70, form: 7, salary: 0.13, value: 2.2, team: 'rostov' },
+                { id: 54, name: 'К. Байрамян', position: 'MID', rating: 78, age: 28, nationality: 'Россия', attack: 75, defense: 72, form: 7, salary: 0.1, value: 1.9, team: 'rostov' },
+                { id: 55, name: 'Е. Чернов', position: 'DEF', rating: 77, age: 30, nationality: 'Россия', attack: 55, defense: 78, form: 7, salary: 0.09, value: 1.7, team: 'rostov' },
+                { id: 56, name: 'А. Стоцкий', position: 'ATT', rating: 76, age: 24, nationality: 'Россия', attack: 78, defense: 38, form: 7, salary: 0.08, value: 1.6, team: 'rostov' },
+
+                // Ахмат
+                { id: 57, name: 'В. Гудиев', position: 'GK', rating: 79, age: 29, nationality: 'Россия', attack: 20, defense: 80, form: 7, salary: 0.1, value: 1.9, team: 'akhmat' },
+                { id: 58, name: 'А. Семенов', position: 'DEF', rating: 80, age: 34, nationality: 'Россия', attack: 55, defense: 81, form: 8, salary: 0.12, value: 2.2, team: 'akhmat' },
+                { id: 59, name: 'Б. Бердыев', position: 'MID', rating: 78, age: 26, nationality: 'Россия', attack: 74, defense: 73, form: 7, salary: 0.09, value: 1.8, team: 'akhmat' },
+                { id: 60, name: 'М. Коновалов', position: 'ATT', rating: 77, age: 25, nationality: 'Россия', attack: 79, defense: 40, form: 7, salary: 0.1, value: 1.9, team: 'akhmat' },
+                { id: 61, name: 'И. Умяров', position: 'MID', rating: 79, age: 24, nationality: 'Россия', attack: 75, defense: 76, form: 7, salary: 0.11, value: 2.0, team: 'akhmat' },
+                { id: 62, name: 'А. Тимофеев', position: 'DEF', rating: 77, age: 28, nationality: 'Россия', attack: 58, defense: 78, form: 7, salary: 0.09, value: 1.7, team: 'akhmat' },
+                { id: 63, name: 'В. Ильин', position: 'ATT', rating: 78, age: 29, nationality: 'Россия', attack: 80, defense: 42, form: 7, salary: 0.11, value: 2.0, team: 'akhmat' },
+                { id: 64, name: 'А. Швец', position: 'MID', rating: 76, age: 27, nationality: 'Россия', attack: 73, defense: 71, form: 7, salary: 0.08, value: 1.6, team: 'akhmat' },
+
+                // Сочи
+                { id: 65, name: 'Д. Юрченко', position: 'GK', rating: 81, age: 36, nationality: 'Россия', attack: 20, defense: 82, form: 8, salary: 0.13, value: 2.4, team: 'sochi' },
+                { id: 66, name: 'К. Заика', position: 'DEF', rating: 79, age: 27, nationality: 'Россия', attack: 62, defense: 80, form: 7, salary: 0.1, value: 2.0, team: 'sochi' },
+                { id: 67, name: 'А. Заболотный', position: 'ATT', rating: 80, age: 26, nationality: 'Россия', attack: 81, defense: 42, form: 8, salary: 0.12, value: 2.3, team: 'sochi' },
+                { id: 68, name: 'К. Бурмистров', position: 'MID', rating: 78, age: 29, nationality: 'Россия', attack: 76, defense: 73, form: 7, salary: 0.11, value: 2.0, team: 'sochi' },
+                { id: 69, name: 'А. Юшин', position: 'DEF', rating: 77, age: 25, nationality: 'Россия', attack: 58, defense: 78, form: 7, salary: 0.09, value: 1.7, team: 'sochi' },
+                { id: 70, name: 'Д. Прокошкин', position: 'DEF', rating: 76, age: 24, nationality: 'Россия', attack: 55, defense: 77, form: 7, salary: 0.08, value: 1.6, team: 'sochi' },
+                { id: 71, name: 'Е. Марков', position: 'MID', rating: 78, age: 26, nationality: 'Россия', attack: 77, defense: 72, form: 7, salary: 0.1, value: 1.9, team: 'sochi' },
+                { id: 72, name: 'Н. Бурмистров', position: 'ATT', rating: 77, age: 28, nationality: 'Россия', attack: 79, defense: 40, form: 7, salary: 0.11, value: 2.0, team: 'sochi' },
+
+                // Динамо Мх    
+                { id: 73, name: 'А. Мельников', position: 'GK', rating: 77, age: 30, nationality: 'Россия', attack: 20, defense: 78, form: 7, salary: 0.1, value: 1.8, team: 'dinamo-m' },
+                { id: 74, name: 'М. Гаджисалимов', position: 'DEF', rating: 76, age: 28, nationality: 'Россия', attack: 58, defense: 77, form: 7, salary: 0.09, value: 1.7, team: 'dinamo-m' },
+                { id: 75, name: 'Р. Магомедов', position: 'DEF', rating: 75, age: 27, nationality: 'Россия', attack: 57, defense: 76, form: 7, salary: 0.08, value: 1.6, team: 'dinamo-m' },
+                { id: 76, name: 'А. Иванников', position: 'MID', rating: 77, age: 26, nationality: 'Россия', attack: 75, defense: 74, form: 7, salary: 0.11, value: 1.9, team: 'dinamo-m' },
+                { id: 77, name: 'С. Алиев', position: 'MID', rating: 76, age: 25, nationality: 'Россия', attack: 74, defense: 73, form: 7, salary: 0.1, value: 1.8, team: 'dinamo-m' },
+                { id: 78, name: 'М. Батырев', position: 'MID', rating: 75, age: 24, nationality: 'Россия', attack: 73, defense: 72, form: 7, salary: 0.09, value: 1.7, team: 'dinamo-m' },
+                { id: 79, name: 'А. Абдулаев', position: 'ATT', rating: 78, age: 27, nationality: 'Россия', attack: 79, defense: 43, form: 7, salary: 0.12, value: 2.0, team: 'dinamo-m' },
+                { id: 80, name: 'З. Кадиев', position: 'ATT', rating: 77, age: 26, nationality: 'Россия', attack: 78, defense: 42, form: 7, salary: 0.11, value: 1.9, team: 'dinamo-m' },
+
+                // Нижний Новгород
+                { id: 81, name: 'А. Нигматуллин', position: 'GK', rating: 77, age: 28, nationality: 'Россия', attack: 20, defense: 78, form: 7, salary: 0.08, value: 1.6, team: 'nizhny' },
+                { id: 82, name: 'И. Калинин', position: 'DEF', rating: 76, age: 26, nationality: 'Россия', attack: 55, defense: 77, form: 7, salary: 0.09, value: 1.7, team: 'nizhny' },
+                { id: 83, name: 'Н. Алексеев', position: 'ATT', rating: 75, age: 25, nationality: 'Россия', attack: 77, defense: 40, form: 7, salary: 0.08, value: 1.5, team: 'nizhny' },
+                { id: 84, name: 'А. Сапета', position: 'MID', rating: 77, age: 33, nationality: 'Россия', attack: 75, defense: 73, form: 7, salary: 0.1, value: 1.8, team: 'nizhny' },
+                { id: 85, name: 'М. Макаров', position: 'DEF', rating: 75, age: 27, nationality: 'Россия', attack: 58, defense: 76, form: 7, salary: 0.08, value: 1.5, team: 'nizhny' },
+                { id: 86, name: 'Д. Полярус', position: 'MID', rating: 76, age: 24, nationality: 'Россия', attack: 74, defense: 72, form: 7, salary: 0.09, value: 1.6, team: 'nizhny' },
+                { id: 87, name: 'А. Ковба', position: 'ATT', rating: 74, age: 26, nationality: 'Россия', attack: 76, defense: 38, form: 7, salary: 0.07, value: 1.4, team: 'nizhny' },
+                { id: 88, name: 'Н. Калинский', position: 'MID', rating: 75, age: 25, nationality: 'Россия', attack: 73, defense: 71, form: 7, salary: 0.08, value: 1.5, team: 'nizhny' },
+
+                // Оренбург
+                { id: 89, name: 'А. Сычев', position: 'GK', rating: 76, age: 30, nationality: 'Россия', attack: 20, defense: 77, form: 7, salary: 0.08, value: 1.5, team: 'orenburg' },
+                { id: 90, name: 'Д. Андреев', position: 'DEF', rating: 75, age: 28, nationality: 'Россия', attack: 55, defense: 76, form: 7, salary: 0.09, value: 1.6, team: 'orenburg' },
+                { id: 91, name: 'В. Сапронов', position: 'ATT', rating: 76, age: 27, nationality: 'Россия', attack: 78, defense: 40, form: 7, salary: 0.1, value: 1.7, team: 'orenburg' },
+                { id: 92, name: 'А. Малютин', position: 'MID', rating: 74, age: 26, nationality: 'Россия', attack: 73, defense: 71, form: 7, salary: 0.07, value: 1.4, team: 'orenburg' },
+                { id: 93, name: 'М. Сираков', position: 'DEF', rating: 73, age: 29, nationality: 'Россия', attack: 52, defense: 74, form: 7, salary: 0.07, value: 1.3, team: 'orenburg' },
+                { id: 94, name: 'Д. Воробьев', position: 'MID', rating: 75, age: 25, nationality: 'Россия', attack: 74, defense: 72, form: 7, salary: 0.08, value: 1.5, team: 'orenburg' },
+                { id: 95, name: 'А. Ковалев', position: 'ATT', rating: 74, age: 24, nationality: 'Россия', attack: 76, defense: 38, form: 7, salary: 0.07, value: 1.4, team: 'orenburg' },
+                { id: 96, name: 'И. Башкиров', position: 'MID', rating: 73, age: 27, nationality: 'Россия', attack: 72, defense: 70, form: 7, salary: 0.06, value: 1.2, team: 'orenburg' },
+
+                // Рубин
+                { id: 97, name: 'Ю. Дюпин', position: 'GK', rating: 78, age: 31, nationality: 'Россия', attack: 20, defense: 79, form: 7, salary: 0.12, value: 2.0, team: 'rubin' },
+                { id: 98, name: 'А. Зуев', position: 'DEF', rating: 76, age: 27, nationality: 'Россия', attack: 58, defense: 77, form: 7, salary: 0.09, value: 1.7, team: 'rubin' },
+                { id: 99, name: 'Д. Тарасов', position: 'DEF', rating: 77, age: 28, nationality: 'Россия', attack: 60, defense: 78, form: 7, salary: 0.1, value: 1.8, team: 'rubin' },
+                { id: 100, name: 'И. Коновалов', position: 'MID', rating: 78, age: 26, nationality: 'Россия', attack: 75, defense: 74, form: 7, salary: 0.11, value: 1.9, team: 'rubin' },
+                { id: 101, name: 'А. Ломовицкий', position: 'MID', rating: 77, age: 25, nationality: 'Россия', attack: 76, defense: 73, form: 7, salary: 0.1, value: 1.8, team: 'rubin' },
+                { id: 102, name: 'О. Шапиев', position: 'MID', rating: 76, age: 24, nationality: 'Россия', attack: 74, defense: 72, form: 7, salary: 0.09, value: 1.6, team: 'rubin' },
+                { id: 103, name: 'Д. Камалов', position: 'ATT', rating: 79, age: 27, nationality: 'Россия', attack: 80, defense: 42, form: 7, salary: 0.13, value: 2.1, team: 'rubin' },
+                { id: 104, name: 'Л. Мусаев', position: 'ATT', rating: 78, age: 26, nationality: 'Россия', attack: 79, defense: 40, form: 7, salary: 0.12, value: 2.0, team: 'rubin' },
+
+                // Крылья Советов
+                { id: 105, name: 'И. Ломаев', position: 'GK', rating: 79, age: 27, nationality: 'Россия', attack: 20, defense: 80, form: 7, salary: 0.1, value: 1.9, team: 'krylia' },
+                { id: 106, name: 'С. Божич', position: 'DEF', rating: 78, age: 28, nationality: 'Сербия', attack: 58, defense: 79, form: 7, salary: 0.11, value: 2.0, team: 'krylia' },
+                { id: 107, name: 'Д. Цыпченко', position: 'ATT', rating: 77, age: 26, nationality: 'Россия', attack: 79, defense: 40, form: 7, salary: 0.1, value: 1.8, team: 'krylia' },
+                { id: 108, name: 'Р. Ежов', position: 'MID', rating: 76, age: 29, nationality: 'Россия', attack: 74, defense: 72, form: 7, salary: 0.09, value: 1.7, team: 'krylia' },
+                { id: 109, name: 'А. Солдатенков', position: 'DEF', rating: 75, age: 27, nationality: 'Россия', attack: 55, defense: 76, form: 7, salary: 0.08, value: 1.5, team: 'krylia' },
+                { id: 110, name: 'А. Зиньковский', position: 'MID', rating: 78, age: 26, nationality: 'Россия', attack: 77, defense: 73, form: 7, salary: 0.11, value: 2.0, team: 'krylia' },
+                { id: 111, name: 'В. Сарвели', position: 'ATT', rating: 76, age: 25, nationality: 'Россия', attack: 78, defense: 40, form: 7, salary: 0.09, value: 1.7, team: 'krylia' },
+                { id: 112, name: 'Д. Иванисеня', position: 'MID', rating: 75, age: 28, nationality: 'Россия', attack: 73, defense: 71, form: 7, salary: 0.08, value: 1.5, team: 'krylia' },
+
+                // Балтика
+                { id: 113, name: 'Е. Лобанцев', position: 'GK', rating: 76, age: 29, nationality: 'Россия', attack: 20, defense: 77, form: 7, salary: 0.08, value: 1.5, team: 'baltica' },
+                { id: 114, name: 'Д. Шадрин', position: 'DEF', rating: 75, age: 28, nationality: 'Россия', attack: 55, defense: 76, form: 7, salary: 0.09, value: 1.6, team: 'baltica' },
+                { id: 115, name: 'А. Кutin', position: 'ATT', rating: 74, age: 26, nationality: 'Россия', attack: 76, defense: 38, form: 7, salary: 0.08, value: 1.4, team: 'baltica' },
+                { id: 116, name: 'М. Кузьмин', position: 'MID', rating: 73, age: 27, nationality: 'Россия', attack: 72, defense: 70, form: 7, salary: 0.07, value: 1.3, team: 'baltica' },
+                { id: 117, name: 'А. Носков', position: 'DEF', rating: 72, age: 29, nationality: 'Россия', attack: 52, defense: 73, form: 7, salary: 0.06, value: 1.2, team: 'baltica' },
+                { id: 118, name: 'Д. Кабутов', position: 'MID', rating: 74, age: 25, nationality: 'Россия', attack: 73, defense: 71, form: 7, salary: 0.08, value: 1.4, team: 'baltica' },
+                { id: 119, name: 'А. Макаров', position: 'ATT', rating: 73, age: 24, nationality: 'Россия', attack: 75, defense: 38, form: 7, salary: 0.07, value: 1.3, team: 'baltica' },
+                { id: 120, name: 'И. Алексеев', position: 'MID', rating: 72, age: 26, nationality: 'Россия', attack: 71, defense: 69, form: 7, salary: 0.06, value: 1.1, team: 'baltica' },
+
+                // Акрон
+                { id: 121, name: 'А. Низамутдинов', position: 'GK', rating: 74, age: 29, nationality: 'Россия', attack: 20, defense: 75, form: 7, salary: 0.07, value: 1.4, team: 'akron' },
+                { id: 122, name: 'Д. Савин', position: 'DEF', rating: 73, age: 27, nationality: 'Россия', attack: 55, defense: 74, form: 7, salary: 0.08, value: 1.5, team: 'akron' },
+                { id: 123, name: 'М. Темников', position: 'DEF', rating: 72, age: 26, nationality: 'Россия', attack: 54, defense: 73, form: 7, salary: 0.07, value: 1.3, team: 'akron' },
+                { id: 124, name: 'А. Карпухин', position: 'MID', rating: 74, age: 25, nationality: 'Россия', attack: 73, defense: 72, form: 7, salary: 0.09, value: 1.6, team: 'akron' },
+                { id: 125, name: 'Д. Коробов', position: 'MID', rating: 73, age: 24, nationality: 'Россия', attack: 72, defense: 71, form: 7, salary: 0.08, value: 1.4, team: 'akron' },
+                { id: 126, name: 'С. Макаров', position: 'MID', rating: 75, age: 26, nationality: 'Россия', attack: 74, defense: 73, form: 7, salary: 0.1, value: 1.7, team: 'akron' },
+                { id: 127, name: 'И. Бакаев', position: 'ATT', rating: 76, age: 27, nationality: 'Россия', attack: 77, defense: 41, form: 7, salary: 0.11, value: 1.8, team: 'akron' },
+                { id: 128, name: 'А. Сутормин', position: 'ATT', rating: 75, age: 25, nationality: 'Россия', attack: 76, defense: 40, form: 7, salary: 0.1, value: 1.7, team: 'akron' }
+            ],
+            transferPlayers: [
+                { id: 201, name: 'Л. Месси', position: 'ATT', rating: 94, age: 35, nationality: 'Аргентина', attack: 95, defense: 30, form: 9, salary: 2.5, value: 35.0, team: 'free' },
+                { id: 202, name: 'К. Роналду', position: 'ATT', rating: 90, age: 37, nationality: 'Португалия', attack: 92, defense: 35, form: 8, salary: 2.0, value: 28.0, team: 'free' },
+                { id: 203, name: 'Н. Кантаре', position: 'MID', rating: 86, age: 26, nationality: 'Франция', attack: 84, defense: 75, form: 8, salary: 0.8, value: 12.0, team: 'free' },
+                { id: 204, name: 'С. Рамос', position: 'DEF', rating: 87, age: 36, nationality: 'Испания', attack: 65, defense: 88, form: 8, salary: 1.2, value: 15.0, team: 'free' },
+                { id: 205, name: 'П. Погба', position: 'MID', rating: 85, age: 29, nationality: 'Франция', attack: 82, defense: 78, form: 7, salary: 1.0, value: 18.0, team: 'free' },
+                { id: 206, name: 'Э. Халанд', position: 'ATT', rating: 88, age: 22, nationality: 'Норвегия', attack: 90, defense: 40, form: 9, salary: 1.5, value: 25.0, team: 'free' },
+                { id: 207, name: 'К. Де Брюйне', position: 'MID', rating: 91, age: 31, nationality: 'Бельгия', attack: 88, defense: 72, form: 9, salary: 2.2, value: 32.0, team: 'free' },
+                { id: 208, name: 'В. ван Дейк', position: 'DEF', rating: 89, age: 31, nationality: 'Нидерланды', attack: 60, defense: 90, form: 9, salary: 1.8, value: 28.0, team: 'free' },
+                { id: 209, name: 'Т. Курзава', position: 'DEF', rating: 82, age: 29, nationality: 'Франция', attack: 70, defense: 81, form: 7, salary: 0.7, value: 10.0, team: 'free' },
+                { id: 210, name: 'Х. Мануэль', position: 'GK', rating: 87, age: 34, nationality: 'Бразилия', attack: 20, defense: 88, form: 8, salary: 1.2, value: 15.0, team: 'free' },
+                { id: 211, name: 'Л. Сане', position: 'MID', rating: 86, age: 26, nationality: 'Германия', attack: 85, defense: 65, form: 8, salary: 1.3, value: 20.0, team: 'free' },
+                { id: 212, name: 'Р. Стерлинг', position: 'ATT', rating: 87, age: 27, nationality: 'Англия', attack: 87, defense: 45, form: 8, salary: 1.5, value: 22.0, team: 'free' },
+                { id: 213, name: 'А. Гризманн', position: 'ATT', rating: 88, age: 31, nationality: 'Франция', attack: 89, defense: 48, form: 9, salary: 1.8, value: 26.0, team: 'free' },
+                { id: 214, name: 'Т. Кроос', position: 'MID', rating: 87, age: 32, nationality: 'Германия', attack: 82, defense: 80, form: 8, salary: 1.5, value: 24.0, team: 'free' },
+                { id: 215, name: 'Д. Алаба', position: 'DEF', rating: 86, age: 30, nationality: 'Австрия', attack: 68, defense: 87, form: 8, salary: 1.4, value: 23.0, team: 'free' },
+                { id: 216, name: 'Э. Менди', position: 'GK', rating: 85, age: 30, nationality: 'Сенегал', attack: 20, defense: 86, form: 8, salary: 1.3, value: 21.0, team: 'free' },
+                { id: 217, name: 'Ф. Де Йонг', position: 'MID', rating: 87, age: 25, nationality: 'Нидерланды', attack: 83, defense: 79, form: 8, salary: 1.6, value: 25.0, team: 'free' },
+                { id: 218, name: 'Р. Левандовски', position: 'ATT', rating: 91, age: 34, nationality: 'Польша', attack: 93, defense: 42, form: 9, salary: 2.0, value: 30.0, team: 'free' },
+                { id: 219, name: 'Ж. Кимпимбе', position: 'DEF', rating: 85, age: 27, nationality: 'Франция', attack: 62, defense: 86, form: 8, salary: 1.2, value: 20.0, team: 'free' },
+                { id: 220, name: 'Б. Фернандеш', position: 'MID', rating: 88, age: 28, nationality: 'Португалия', attack: 86, defense: 74, form: 9, salary: 1.7, value: 27.0, team: 'free' },
+                { id: 221, name: 'Я. Облак', position: 'GK', rating: 88, age: 29, nationality: 'Словения', attack: 20, defense: 89, form: 8, salary: 1.5, value: 24.0, team: 'free' },
+                { id: 222, name: 'Р. Маринес', position: 'ATT', rating: 82, age: 24, nationality: 'Эквадор', attack: 84, defense: 45, form: 8, salary: 0.9, value: 15.0, team: 'free' },
+                { id: 223, name: 'А. Баррера', position: 'MID', rating: 81, age: 26, nationality: 'Колумбия', attack: 80, defense: 75, form: 7, salary: 0.8, value: 13.0, team: 'free' },
+                { id: 224, name: 'Д. Райс', position: 'MID', rating: 84, age: 24, nationality: 'Англия', attack: 78, defense: 82, form: 8, salary: 1.1, value: 18.0, team: 'free' },
+                { id: 225, name: 'Ж. Канселу', position: 'DEF', rating: 85, age: 28, nationality: 'Португалия', attack: 75, defense: 83, form: 8, salary: 1.3, value: 21.0, team: 'free' },
+                { id: 226, name: 'Д. Влахо维奇', position: 'ATT', rating: 85, age: 23, nationality: 'Сербия', attack: 87, defense: 43, form: 8, salary: 1.2, value: 20.0, team: 'free' },
+                { id: 227, name: 'Ф. Костич', position: 'MID', rating: 83, age: 30, nationality: 'Сербия', attack: 82, defense: 75, form: 8, salary: 1.0, value: 16.0, team: 'free' },
+                { id: 228, name: 'Н. Отаменди', position: 'DEF', rating: 82, age: 34, nationality: 'Аргентина', attack: 62, defense: 83, form: 7, salary: 0.9, value: 14.0, team: 'free' },
+                { id: 229, name: 'Л. Троссард', position: 'ATT', rating: 82, age: 28, nationality: 'Бельгия', attack: 83, defense: 45, form: 8, salary: 1.0, value: 16.0, team: 'free' },
+                { id: 230, name: 'Ю. Турам', position: 'DEF', rating: 81, age: 22, nationality: 'Франция', attack: 65, defense: 82, form: 8, salary: 0.9, value: 15.0, team: 'free' },
+                { id: 231, name: 'А. Мак Алистер', position: 'MID', rating: 84, age: 25, nationality: 'Аргентина', attack: 80, defense: 79, form: 8, salary: 1.1, value: 18.0, team: 'free' },
+                { id: 232, name: 'Д. Осимхен', position: 'ATT', rating: 86, age: 24, nationality: 'Нигерия', attack: 88, defense: 44, form: 8, salary: 1.4, value: 22.0, team: 'free' },
+                { id: 233, name: 'К. Де Кетеларе', position: 'MID', rating: 82, age: 22, nationality: 'Бельгия', attack: 81, defense: 76, form: 8, salary: 0.9, value: 15.0, team: 'free' },
+                { id: 234, name: 'А. Бастонь', position: 'DEF', rating: 83, age: 25, nationality: 'Италия', attack: 64, defense: 84, form: 8, salary: 1.0, value: 17.0, team: 'free' },
+                { id: 235, name: 'Д. Райтман', position: 'GK', rating: 82, age: 26, nationality: 'Германия', attack: 20, defense: 83, form: 8, salary: 0.9, value: 15.0, team: 'free' },
+                { id: 236, name: 'П. Фоден', position: 'MID', rating: 85, age: 22, nationality: 'Англия', attack: 86, defense: 74, form: 8, salary: 1.3, value: 21.0, team: 'free' },
+                { id: 237, name: 'Р. Гравенберч', position: 'MID', rating: 80, age: 21, nationality: 'Нидерланды', attack: 79, defense: 75, form: 7, salary: 0.8, value: 13.0, team: 'free' },
+                { id: 238, name: 'А. Дэвис', position: 'DEF', rating: 84, age: 22, nationality: 'Канада', attack: 75, defense: 82, form: 8, salary: 1.2, value: 19.0, team: 'free' },
+                { id: 239, name: 'В. Джоб', position: 'ATT', rating: 81, age: 20, nationality: 'Франция', attack: 83, defense: 42, form: 8, salary: 0.9, value: 15.0, team: 'free' },
+                { id: 240, name: 'М. Салах', position: 'ATT', rating: 89, age: 31, nationality: 'Египет', attack: 90, defense: 45, form: 9, salary: 2.0, value: 30.0, team: 'free' },
+
+                { id: 241, name: 'Е. Господчиков', position: 'GK', rating: 75, age: 31, nationality: 'Россия', attack: 20, defense: 76, form: 7, salary: 0.08, value: 1.5, team: 'free' },
+                { id: 242, name: 'А. Алвич', position: 'DEF', rating: 74, age: 28, nationality: 'Россия', attack: 54, defense: 75, form: 7, salary: 0.07, value: 1.4, team: 'free' },
+                { id: 243, name: 'Р. Магкеев', position: 'ATT', rating: 75, age: 26, nationality: 'Россия', attack: 77, defense: 40, form: 7, salary: 0.09, value: 1.6, team: 'free' },
+                { id: 244, name: 'Д. Киньо', position: 'MID', rating: 73, age: 29, nationality: 'Россия', attack: 72, defense: 70, form: 7, salary: 0.07, value: 1.3, team: 'free' },
+                { id: 245, name: 'А. Маслов', position: 'DEF', rating: 72, age: 27, nationality: 'Россия', attack: 52, defense: 73, form: 7, salary: 0.06, value: 1.2, team: 'free' },
+                { id: 246, name: 'Д. Пенчиков', position: 'MID', rating: 74, age: 25, nationality: 'Россия', attack: 73, defense: 71, form: 7, salary: 0.08, value: 1.4, team: 'free' },
+                { id: 247, name: 'М. Адаев', position: 'ATT', rating: 73, age: 24, nationality: 'Россия', attack: 75, defense: 38, form: 7, salary: 0.07, value: 1.3, team: 'free' },
+                { id: 248, name: 'А. Карпуцкий', position: 'MID', rating: 72, age: 26, nationality: 'Россия', attack: 71, defense: 69, form: 7, salary: 0.06, value: 1.1, team: 'free' },
+
+                { id: 249, name: 'А. Довбня', position: 'GK', rating: 73, age: 30, nationality: 'Россия', attack: 20, defense: 74, form: 7, salary: 0.07, value: 1.3, team: 'free' },
+                { id: 250, name: 'Д. Плиев', position: 'DEF', rating: 72, age: 28, nationality: 'Россия', attack: 52, defense: 73, form: 7, salary: 0.06, value: 1.2, team: 'free' },
+                { id: 251, name: 'А. Догузов', position: 'ATT', rating: 73, age: 26, nationality: 'Россия', attack: 75, defense: 38, form: 7, salary: 0.08, value: 1.4, team: 'free' },
+                { id: 252, name: 'И. Тедеев', position: 'MID', rating: 71, age: 29, nationality: 'Россия', attack: 70, defense: 68, form: 7, salary: 0.06, value: 1.1, team: 'free' },
+                { id: 253, name: 'А. Багаев', position: 'DEF', rating: 70, age: 27, nationality: 'Россия', attack: 50, defense: 71, form: 7, salary: 0.05, value: 1.0, team: 'free' },
+                { id: 254, name: 'З. Бакаев', position: 'MID', rating: 72, age: 25, nationality: 'Россия', attack: 71, defense: 69, form: 7, salary: 0.07, value: 1.2, team: 'free' },
+                { id: 255, name: 'Г. Гогричиани', position: 'ATT', rating: 71, age: 24, nationality: 'Россия', attack: 73, defense: 36, form: 7, salary: 0.06, value: 1.1, team: 'free' },
+                { id: 256, name: 'А. Хубулов', position: 'MID', rating: 70, age: 26, nationality: 'Россия', attack: 69, defense: 67, form: 7, salary: 0.05, value: 0.9, team: 'free' },
+
+                { id: 257, name: 'И. Помазенко', position: 'GK', rating: 78, age: 31, nationality: 'Россия', attack: 20, defense: 79, form: 7, salary: 0.09, value: 1.7, team: 'free' },
+                { id: 258, name: 'А. Егорычев', position: 'DEF', rating: 77, age: 29, nationality: 'Россия', attack: 58, defense: 78, form: 7, salary: 0.1, value: 1.8, team: 'free' },
+                { id: 259, name: 'Э. Бикфалви', position: 'ATT', rating: 79, age: 28, nationality: 'Венгрия', attack: 80, defense: 42, form: 7, salary: 0.12, value: 2.1, team: 'free' },
+                { id: 260, name: 'Д. Емельянов', position: 'MID', rating: 76, age: 25, nationality: 'Россия', attack: 74, defense: 72, form: 7, salary: 0.08, value: 1.6, team: 'free' },
+                { id: 261, name: 'А. Мамин', position: 'DEF', rating: 75, age: 27, nationality: 'Россия', attack: 55, defense: 76, form: 7, salary: 0.08, value: 1.5, team: 'free' },
+                { id: 262, name: 'Р. Аугустыняк', position: 'MID', rating: 77, age: 30, nationality: 'Польша', attack: 75, defense: 73, form: 7, salary: 0.1, value: 1.8, team: 'free' },
+                { id: 263, name: 'И. Димидко', position: 'ATT', rating: 76, age: 26, nationality: 'Россия', attack: 78, defense: 40, form: 7, salary: 0.09, value: 1.7, team: 'free' },
+                { id: 264, name: 'Д. Кулаков', position: 'MID', rating: 75, age: 24, nationality: 'Россия', attack: 73, defense: 71, form: 7, salary: 0.07, value: 1.4, team: 'free' }
+
+            ],
+            matches: [],
+            leagueTable: [],
+            playoffMatches: [],
+            currentTeam: null,
+            currentMatch: null,
+            formation: '4-4-2',
+            week: 1,
+            season: 2025, // Начинаем с 2025 года
+            gameState: 'menu', // menu, team-select, gameplay
+            isPlayoff: false
+        };
+
+        // Инициализация игры
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загрузка команд на экран выбора
+            loadTeamsSelection();
+            
+            // Обработчики главного меню
+            document.getElementById('new-game-btn').addEventListener('click', function () {
+                showScreen('team-selection');
+                gameData.gameState = 'team-select';
+            });
+            
+            document.getElementById('load-game-btn').addEventListener('click', function () {
+                if (loadGame()) {
+                    showScreen('squad');
+                    gameData.gameState = 'gameplay';
+                    updateTeamInfo();
+                    loadTeamPlayers();
+                    loadTransferPlayers();
+                    loadMatches();
+                    loadLeagueTable();
+                    updateNextMatch();
+                    updateStadiumInfo();
+                    showModal('Загрузка', 'Игра успешно загружена!');
+                } else {
+                    showModal('Загрузка', 'Сохраненная игра не найдена');
+                }
+            });
+            
+            document.getElementById('back-to-menu').addEventListener('click', function () {
+                showScreen('main-menu');
+                gameData.gameState = 'menu';
+            });
+
+            document.getElementById('main-menu-btn').addEventListener('click', function () {
+                showScreen('main-menu');
+                gameData.gameState = 'menu';
+            });
+            
+            // Обработчики выбора команды
+            const teamCards = document.querySelectorAll('.team-card');
+            teamCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    teamCards.forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const teamId = this.getAttribute('data-team');
+                    gameData.currentTeam = JSON.parse(JSON.stringify(gameData.teams.find(t => t.id === teamId)));
+                });
+            });
+            
+            // Начать игру
+            document.getElementById('start-game').addEventListener('click', function () {
+                if (!gameData.currentTeam) {
+                    showModal('Выбор команды', 'Пожалуйста, выберите команду для управления');
+                    return;
+                }
+
+                // Инициализация данных игры
+                initGameData();
+
+                // Скрыть экран выбора команды и показать экран состава
+                showScreen('squad');
+                gameData.gameState = 'gameplay';
+
+                // Обновить информацию о команде
+                updateTeamInfo();
+
+                // Загрузить игроков команды
+                loadTeamPlayers();
+
+                // Загрузить трансферных игроков
+                loadTransferPlayers();
+
+                // Загрузить календарь матчей
+                loadMatches();
+
+                // Загрузить турнирную таблицу
+                loadLeagueTable();
+
+                // Обновить следующий матч
+                updateNextMatch();
+
+                // Обновить информацию о стадионе
+                updateStadiumInfo();
+            });
+            
+            // Переключение между экранами
+            const menuButtons = document.querySelectorAll('.menu-btn');
+            
+            menuButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (gameData.gameState !== 'gameplay') {
+                        return; // Не переключать экраны, если игра не начата
+                    }
+                    
+                    const screenId = this.getAttribute('data-screen');
+                    
+                    // Убираем активный класс у всех кнопок
+                    menuButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Добавляем активный класс к текущей кнопке
+                    this.classList.add('active');
+                    
+                    // Показываем соответствующий экран
+                    showScreen(screenId);
+                    
+                    // Обновляем данные на экране
+                    if (screenId === 'squad') {
+                        loadTeamPlayers();
+                    } else if (screenId === 'transfers') {
+                        loadTransferPlayers();
+                        initExchangeTab();
+                    } else if (screenId === 'calendar') {
+                        loadMatches();
+                        loadLeagueTable();
+                    } else if (screenId === 'finance') {
+                        updateFinanceInfo();
+                    } else if (screenId === 'match') {
+                        updateNextMatch();
+                    } else if (screenId === 'tactics') {
+                        updateTacticsPitch();
+                    } else if (screenId === 'stadium') {
+                        updateStadiumInfo();
+                    } else if (screenId === 'playoffs') {
+                        loadPlayoffBracket();
+                    }
+                });
+            });
+            
+            // Обработка кнопки "Играть матч"
+            document.getElementById('play-match').addEventListener('click', function() {
+                playMatch(false);
+            });
+            
+            // Обработка кнопки "Быстрая симуляция"
+            document.getElementById('simulate-match').addEventListener('click', function() {
+                playMatch(true);
+            });
+            
+            // Обработка кнопки сохранения игры
+            document.getElementById('save-game').addEventListener('click', function() {
+                saveGame();
+                showModal('Сохранение', 'Игра успешно сохранена!');
+            });
+            
+            // Обработка кнопки загрузки игры
+            document.getElementById('load-game').addEventListener('click', function() {
+                if (loadGame()) {
+                    showModal('Загрузка', 'Игра успешно загружена!');
+                    updateTeamInfo();
+                    loadTeamPlayers();
+                    loadTransferPlayers();
+                    loadMatches();
+                    loadLeagueTable();
+                    updateNextMatch();
+                    updateStadiumInfo();
+                } else {
+                    showModal('Загрузка', 'Сохраненная игры не найдена');
+                }
+            });
+            
+            // Обработка кнопки запроса бюджета
+            document.getElementById('request-budget').addEventListener('click', function() {
+                if (Math.random() > 0.3) {
+                    gameData.currentTeam.budget += 0.5;
+                    updateTeamInfo();
+                    updateFinanceInfo();
+                    showModal('Успех', 'Вам одобрено увеличение бюджета на 0.5M €!');
+                } else {
+                    showModal('Отказ', 'В увеличении бюджета отказано. Покажите лучшие результаты!');
+                }
+            });
+            
+            // Обработка выбора формации
+            const formationButtons = document.querySelectorAll('.formation-btn');
+            formationButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    formationButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    gameData.formation = this.getAttribute('data-formation');
+                    updateTacticsPitch();
+                });
+            });
+            
+            // Обработка улучшений стадиона
+            document.querySelectorAll('[data-upgrade]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const upgradeType = this.getAttribute('data-upgrade');
+                    upgradeStadium(upgradeType);
+                });
+            });
+            
+            // Обработка модального окна
+            document.getElementById('modal-confirm').addEventListener('click', function() {
+                document.getElementById('modal').style.display = 'none';
+            });
+            
+            document.getElementById('modal-cancel').addEventListener('click', function() {
+                document.getElementById('modal').style.display = 'none';
+            });
+            
+            // Обработка фильтров трансферного рынка
+            document.getElementById('position-filter').addEventListener('change', function() {
+                loadTransferPlayers();
+            });
+            
+            document.getElementById('price-filter').addEventListener('change', function() {
+                loadTransferPlayers();
+            });
+            
+            // Обработка вкладок трансферного рынка
+            const transferTabs = document.querySelectorAll('.transfer-tab');
+            transferTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    transferTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    if (tabId === 'market') {
+                        document.getElementById('transfer-market-tab').style.display = 'block';
+                        document.getElementById('transfer-exchange-tab').style.display = 'none';
+                    } else if (tabId === 'exchange') {
+                        document.getElementById('transfer-market-tab').style.display = 'none';
+                        document.getElementById('transfer-exchange-tab').style.display = 'block';
+                        initExchangeTab();
+                    }
+                });
+            });
+            
+            // Обработка выбора команды для обмена
+            document.getElementById('opponent-team-select').addEventListener('change', function() {
+                updateOpponentPlayers();
+            });
+            
+            // Обработка предложения обмена
+            document.getElementById('propose-exchange').addEventListener('click', function() {
+                proposeExchange();
+            });
+        });
+
+        // Функции игры
+        function loadTeamsSelection() {
+            const container = document.getElementById('teams-container');
+            container.innerHTML = '';
+
+            gameData.teams.forEach(team => {
+                const card = document.createElement('div');
+                card.className = 'team-card';
+                card.setAttribute('data-team', team.id);
+                card.innerHTML = `
+            <div class="team-card-logo">
+                <img src="${team.logo}" alt="${team.name}">
+            </div>
+            <div class="team-card-name">${team.name}</div>
+            <div class="team-card-budget">Бюджет: ${team.budget}M €</div>
+        `;
+
+                // Добавляем обработчик события сразу при создании карточки
+                card.addEventListener('click', function () {
+                    document.querySelectorAll('.team-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const teamId = this.getAttribute('data-team');
+                    gameData.currentTeam = JSON.parse(JSON.stringify(gameData.teams.find(t => t.id === teamId)));
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        function showScreen(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => screen.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+
+            // Обновляем информацию о сезоне
+            document.getElementById('current-season').textContent = gameData.season;
+            document.getElementById('playoff-season').textContent = gameData.season;
+        }
+
+        function initGameData() {
+            // Инициализация матчей - каждая команда играет с каждой дважды
+            gameData.matches = [];
+            const teamIds = gameData.teams.map(t => t.id);
+            
+            // Для 16 команд: 15 соперников * 2 = 30 матчей на команду
+            // Всего матчей в сезоне: (16 * 15) = 240, распределенных по 30 турам (по 8 матчей в туре)
+            for (let i = 0; i < teamIds.length; i++) {
+                for (let j = i + 1; j < teamIds.length; j++) {
+                    // Матч дома
+                    gameData.matches.push({
+                        week: Math.floor(gameData.matches.length / 8) + 1,
+                        home: teamIds[i],
+                        away: teamIds[j],
+                        homeScore: null,
+                        awayScore: null,
+                        played: false
+                    });
+                    
+                    // Матч на выезде
+                    gameData.matches.push({
+                        week: Math.floor(gameData.matches.length / 8) + 1,
+                        home: teamIds[j],
+                        away: teamIds[i],
+                        homeScore: null,
+                        awayScore: null,
+                        played: false
+                    });
+                }
+            }
+            
+            // Перемешиваем матчи для реалистичности
+            gameData.matches.sort(() => Math.random() - 0.5);
+            
+            // Переназначаем номера туров (30 туров)
+            const weeks = {};
+            let currentWeek = 1;
+            let matchesPerWeek = 8; // 16 команд = 8 матчей в туре
+
+            // Распределяем матчи по неделям равномерно
+            for (let i = 0; i < gameData.matches.length; i++) {
+                if (i % matchesPerWeek === 0 && i > 0) {
+                    currentWeek++;
+                }
+                gameData.matches[i].week = currentWeek;
+            }
+
+            gameData.matches.forEach(match => {
+                const key = `${match.home}-${match.away}`;
+                if (!weeks[key]) {
+                    weeks[key] = Math.floor(Math.random() * 30) + 1;
+                }
+                match.week = weeks[key];
+            });
+            
+            // Сортируем матчи по неделям
+            gameData.matches.sort((a, b) => a.week - b.week);
+            
+            // Инициализация турнирной таблицы
+            gameData.leagueTable = [];
+            gameData.teams.forEach(team => {
+                gameData.leagueTable.push({
+                    team: team.id,
+                    played: 0,
+                    won: 0,
+                    drawn: 0,
+                    lost: 0,
+                    goalsFor: 0,
+                    goalsAgainst: 0,
+                    points: 0
+                });
+            });
+            
+            // Сбрасываем неделю
+            gameData.week = 1;
+            gameData.season = 2025; // Устанавливаем начальный год
+            gameData.isPlayoff = false;
+            gameData.playoffMatches = [];
+        }
+
+        function updateTeamInfo() {
+            if (!gameData.currentTeam) return;
+            
+            document.getElementById('current-team-logo-img').src = gameData.currentTeam.logo;
+            document.getElementById('current-team-logo-img').alt = gameData.currentTeam.name;
+            document.getElementById('current-team-name').textContent = gameData.currentTeam.name;
+            document.getElementById('current-budget').textContent = gameData.currentTeam.budget.toFixed(1);
+            document.getElementById('current-position').textContent = gameData.currentTeam.position;
+            
+            document.getElementById('finance-budget').textContent = gameData.currentTeam.budget.toFixed(1) + 'M €';
+        }
+
+        function loadTeamPlayers() {
+            const container = document.getElementById('players-container');
+            container.innerHTML = '';
+            
+            const teamPlayers = gameData.players.filter(p => p.team === gameData.currentTeam.id);
+            
+            teamPlayers.forEach(player => {
+                const card = document.createElement('div');
+                card.className = 'player-card';
+                card.innerHTML = `
+                    <div class="player-header">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-rating">${player.rating}</div>
+                    </div>
+                    <div class="player-details">
+                        ${getPositionName(player.position)} • ${player.age} года • ${player.nationality}
+                    </div>
+                    <div class="player-stats">
+                        <div>
+                            <div>${player.position === 'GK' ? 'Спасения' : 'Атака'}: ${player.attack}</div>
+                            <div class="stat-bar"><div class="stat-fill" style="width: ${player.attack}%"></div></div>
+                        </div>
+                        <div>
+                            <div>${player.position === 'ATT' ? 'Оборона' : 'Защита'}: ${player.defense}</div>
+                            <div class="stat-bar"><div class="stat-fill" style="width: ${player.defense}%"></div></div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <div>Форма: ${player.form}/10</div>
+                        <div class="stat-bar"><div class="stat-fill" style="width: ${player.form * 10}%"></div></div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9rem;">
+                        Зарплата: ${player.salary.toFixed(2)}M € • Стоимость: ${player.value.toFixed(1)}M €
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function loadTransferPlayers() {
+            const container = document.getElementById('transfer-players-container');
+            container.innerHTML = '';
+            
+            const positionFilter = document.getElementById('position-filter').value;
+            const priceFilter = document.getElementById('price-filter').value;
+            
+            let filteredPlayers = gameData.transferPlayers;
+            
+            // Фильтрация по позиции
+            if (positionFilter !== 'all') {
+                filteredPlayers = filteredPlayers.filter(p => p.position === positionFilter);
+            }
+            
+            // Фильтрация по цене
+            if (priceFilter !== 'all') {
+                if (priceFilter === '0-1') {
+                    filteredPlayers = filteredPlayers.filter(p => p.value <= 1);
+                } else if (priceFilter === '1-3') {
+                    filteredPlayers = filteredPlayers.filter(p => p.value > 1 && p.value <= 3);
+                } else if (priceFilter === '3-5') {
+                    filteredPlayers = filteredPlayers.filter(p => p.value > 3 && p.value <= 5);
+                } else if (priceFilter === '5-10') {
+                    filteredPlayers = filteredPlayers.filter(p => p.value > 5 && p.value <= 10);
+                } else if (priceFilter === '10+') {
+                    filteredPlayers = filteredPlayers.filter(p => p.value > 10);
+                }
+            }
+            
+            filteredPlayers.forEach(player => {
+                const card = document.createElement('div');
+                card.className = 'transfer-player-card';
+                card.innerHTML = `
+                    <div class="transfer-player-info">
+                        <div style="font-weight: bold; color: #0039a6;">${player.name}</div>
+                        <div>${getPositionName(player.position)} • ${player.age} года • ${player.nationality}</div>
+                        <div>Рейтинг: ${player.rating} | Атака: ${player.attack} | Защита: ${player.defense} | Форма: ${player.form}</div>
+                    </div>
+                    <div class="transfer-player-price">${player.value.toFixed(1)}M €</div>
+                    <button class="btn btn-buy" data-id="${player.id}">Купить</button>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            // Обработка кнопок покупки
+            document.querySelectorAll('.btn-buy').forEach(button => {
+                button.addEventListener('click', function() {
+                    const playerId = parseInt(this.getAttribute('data-id'));
+                    buyPlayer(playerId);
+                });
+            });
+        }
+
+        function buyPlayer(playerId) {
+            const player = gameData.transferPlayers.find(p => p.id === playerId);
+            
+            if (!player) return;
+            
+            if (gameData.currentTeam.budget >= player.value) {
+                gameData.currentTeam.budget -= player.value;
+                player.team = gameData.currentTeam.id;
+                gameData.players.push(player);
+                gameData.transferPlayers = gameData.transferPlayers.filter(p => p.id !== playerId);
+                
+                updateTeamInfo();
+                loadTeamPlayers();
+                loadTransferPlayers();
+                
+                showModal('Трансфер', `Вы успешно приобрели ${player.name} за ${player.value.toFixed(1)}M €!`);
+            } else {
+                showModal('Трансфер', 'Недостаточно средств для покупки этого игрока');
+            }
+        }
+
+        function loadMatches() {
+            const container = document.getElementById('matches-container');
+            container.innerHTML = '';
+            
+            gameData.matches.forEach(match => {
+                const homeTeam = gameData.teams.find(t => t.id === match.home);
+                const awayTeam = gameData.teams.find(t => t.id === match.away);
+                
+                const matchElement = document.createElement('div');
+                matchElement.className = 'match-day';
+                matchElement.innerHTML = `
+                    <div class="match-date">Тур ${match.week}</div>
+                    <div class="match-teams">
+                        <div>${homeTeam.name}</div>
+                        <div>${match.played ? `${match.homeScore} - ${match.awayScore}` : 'vs'}</div>
+                        <div>${awayTeam.name}</div>
+                    </div>
+                    <div class="match-result">${match.played ? (match.homeScore > match.awayScore ? 'П' : match.homeScore < match.awayScore ? 'В' : 'Н') : '-'}</div>
+                `;
+                
+                if (match.home === gameData.currentTeam.id || match.away === gameData.currentTeam.id) {
+                    matchElement.style.backgroundColor = '#e3f2fd';
+                }
+                
+                container.appendChild(matchElement);
+            });
+        }
+
+        function loadLeagueTable() {
+            const tbody = document.querySelector('#league-table tbody');
+            tbody.innerHTML = '';
+            
+            // Сортировка таблицы по очкам
+            const sortedTable = [...gameData.leagueTable].sort((a, b) => {
+                if (b.points !== a.points) return b.points - a.points;
+                const bDiff = b.goalsFor - b.goalsAgainst;
+                const aDiff = a.goalsFor - a.goalsAgainst;
+                if (bDiff !== aDiff) return bDiff - aDiff;
+                return b.goalsFor - a.goalsFor;
+            });
+            
+            sortedTable.forEach((row, index) => {
+                const team = gameData.teams.find(t => t.id === row.team);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${team.name}</td>
+                    <td>${row.played}</td>
+                    <td>${row.won}</td>
+                    <td>${row.drawn}</td>
+                    <td>${row.lost}</td>
+                    <td>${row.goalsFor}</td>
+                    <td>${row.goalsAgainst}</td>
+                    <td>${row.goalsFor - row.goalsAgainst}</td>
+                    <td><strong>${row.points}</strong></td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateNextMatch() {
+            let nextMatch;
+            
+            if (gameData.isPlayoff) {
+                nextMatch = gameData.playoffMatches.find(m => 
+                    !m.played && (m.home === gameData.currentTeam.id || m.away === gameData.currentTeam.id)
+                );
+            } else {
+                nextMatch = gameData.matches.find(m => 
+                    !m.played && (m.home === gameData.currentTeam.id || m.away === gameData.currentTeam.id)
+                );
+            }
+            
+            if (nextMatch) {
+                const homeTeam = gameData.teams.find(t => t.id === nextMatch.home);
+                const awayTeam = gameData.teams.find(t => t.id === nextMatch.away);
+                
+                document.getElementById('home-team-logo-img').src = homeTeam.logo;
+                document.getElementById('home-team-logo-img').alt = homeTeam.name;
+                document.getElementById('home-team-name').textContent = homeTeam.name;
+                document.getElementById('away-team-logo-img').src = awayTeam.logo;
+                document.getElementById('away-team-logo-img').alt = awayTeam.name;
+                document.getElementById('away-team-name').textContent = awayTeam.name;
+                
+                document.getElementById('play-match').disabled = false;
+                document.getElementById('simulate-match').disabled = false;
+                
+                gameData.currentMatch = nextMatch;
+            } else {
+                document.getElementById('home-team-name').textContent = 'Сезон завершен';
+                document.getElementById('away-team-name').textContent = 'Сезон завершен';
+                document.getElementById('match-score').textContent = '- : -';
+                document.getElementById('play-match').disabled = true;
+                document.getElementById('simulate-match').disabled = true;
+                
+                // Если регулярный сезон завершен, начинаем плей-офф
+                if (!gameData.isPlayoff) {
+                    initPlayoff();
+                    gameData.isPlayoff = true;
+                    showModal('Регулярный сезон', 'Регулярный сезон завершен! Начинается плей-офф за Кубок России.');
+                } else {
+                    // Если плей-офф завершен, начинаем новый сезон
+                    showModal('Сезон завершен', `Сезон ${gameData.season} завершен! Начинается новый сезон.`);
+                    gameData.season++;
+                    initGameData();
+                    updateTeamInfo();
+                    loadMatches();
+                    loadLeagueTable();
+                    updateNextMatch();
+                }
+            }
+        }
+
+        function playMatch(fastSimulation) {
+            if (!gameData.currentMatch || gameData.currentMatch.played) return;
+
+            const eventsContainer = document.getElementById('match-events');
+            eventsContainer.innerHTML = '';
+
+            const homeTeam = gameData.teams.find(t => t.id === gameData.currentMatch.home);
+            const awayTeam = gameData.teams.find(t => t.id === gameData.currentMatch.away);
+
+            const homePlayers = gameData.players.filter(p => p.team === gameData.currentMatch.home);
+            const awayPlayers = gameData.players.filter(p => p.team === gameData.currentMatch.away);
+
+            const homeStrength = calculateTeamStrength(homePlayers);
+            const awayStrength = calculateTeamStrength(awayPlayers);
+
+            // Добавляем случайность и фактор домашнего поля
+            const homeAdvantage = gameData.currentMatch.home === gameData.currentTeam.id ? 1.1 : 1.0;
+
+            // Генерируем счет матча
+            let homeScore = 0;
+            let awayScore = 0;
+
+            // Симуляция событий в матче
+            addMatchEvent('Матч начался!', 0, fastSimulation);
+
+            // Симулируем события в матче (голы)
+            for (let minute = 1; minute <= 90; minute++) {
+                // Шанс гола в каждую минуту
+                const homeChance = (homeStrength * homeAdvantage) / 3000;
+                const awayChance = awayStrength / 3000;
+
+                if (Math.random() < homeChance) {
+                    homeScore++;
+                    addMatchEvent(`Гол! ${homeTeam.name} забивает на ${minute} минуте!`, minute * 100, fastSimulation);
+                    updateScore(homeScore, awayScore, fastSimulation);
+                }
+
+                if (Math.random() < awayChance) {
+                    awayScore++;
+                    addMatchEvent(`Гол! ${awayTeam.name} забивает на ${minute} минуте!`, minute * 100, fastSimulation);
+                    updateScore(homeScore, awayScore, fastSimulation);
+                }
+            }
+
+            addMatchEvent('Матч окончен!', 10000, fastSimulation);
+
+            // Сохраняем результат
+            gameData.currentMatch.homeScore = homeScore;
+            gameData.currentMatch.awayScore = awayScore;
+            gameData.currentMatch.played = true;
+
+            // Обновляем турнирную таблицу
+            updateLeagueTable();
+
+            // Обновляем бюджет в зависимости от результата
+            let income = 0;
+            if (gameData.currentMatch.home === gameData.currentTeam.id) {
+                income = gameData.currentTeam.stadium.income;
+                if (homeScore > awayScore) {
+                    gameData.currentTeam.budget += 0.3;
+                    income *= 1.5; // Бонус за победу
+                } else if (homeScore === awayScore) {
+                    gameData.currentTeam.budget += 0.1;
+                }
+            } else {
+                if (awayScore > homeScore) {
+                    gameData.currentTeam.budget += 0.3;
+                    income = 500000; // Призовые за выездную победу
+                } else if (awayScore === homeScore) {
+                    gameData.currentTeam.budget += 0.1;
+                    income = 250000; // Призовые за ничью на выезде
+                }
+            }
+
+            gameData.currentTeam.budget += income / 1000000;
+
+            // Симулируем все матчи текущего тура (включая наш)
+            simulateAllMatches(gameData.week);
+
+            // Переходим к следующей неделе
+            gameData.week++;
+
+            // Симулируем все пропущенные туры (если такие есть)
+            simulateMissedWeeks();
+
+            // Обновляем информацию
+            updateTeamInfo();
+            loadMatches();
+            loadLeagueTable();
+
+            // Ждем завершения анимации и переходим к следующему матчу
+            if (!fastSimulation) {
+                setTimeout(() => {
+                    updateNextMatch();
+                    showModal('Результат матча', `Матч завершился со счетом ${homeScore}:${awayScore}. Ваш бюджет пополнен на ${(income / 1000000).toFixed(2)}M €`);
+                }, 11000);
+            } else {
+                updateNextMatch();
+                showModal('Результат матча', `Матч завершился со счетом ${homeScore}:${awayScore}. Ваш бюджет пополнен на ${(income / 1000000).toFixed(2)}M €`);
+            }
+        }
+
+        function simulateMissedWeeks() {
+            // Находим все туры, которые еще не были сыграны (до текущей недели)
+            for (let week = 1; week < gameData.week; week++) {
+                const weekMatches = gameData.matches.filter(m => m.week === week && !m.played);
+
+                if (weekMatches.length > 0) {
+                    // Симулируем все матчи этого тура
+                    simulateAllMatches(week);
+                }
+            }
+        }
+
+        function simulateAllMatches(week) {
+            // Находим все матчи указанного тура
+            const weekMatches = gameData.matches.filter(m => m.week === week && !m.played);
+
+            weekMatches.forEach(match => {
+                // Пропускаем наш матч, если он уже сыгран
+                if (match.played) return;
+
+                // Симулируем матч
+                const homePlayers = gameData.players.filter(p => p.team === match.home);
+                const awayPlayers = gameData.players.filter(p => p.team === match.away);
+
+                const homeStrength = calculateTeamStrength(homePlayers);
+                const awayStrength = calculateTeamStrength(awayPlayers);
+
+                // Генерируем счет на основе силы команд
+                let homeScore = 0;
+                let awayScore = 0;
+
+                // Симулируем голы (упрощенная версия)
+                for (let i = 0; i < 10; i++) {
+                    const homeChance = homeStrength / 100;
+                    const awayChance = awayStrength / 100;
+
+                    if (Math.random() < homeChance) homeScore++;
+                    if (Math.random() < awayChance) awayScore++;
+                }
+
+                // Устанавливаем счет
+                match.homeScore = homeScore;
+                match.awayScore = awayScore;
+                match.played = true;
+
+                // Обновляем турнирную таблицу
+                updateLeagueTableForMatch(match);
+            });
+        }
+
+        function simulateAllMatches(week) {
+            // Находим все матчи текущего тура
+            const weekMatches = gameData.matches.filter(m => m.week === week && !m.played);
+
+            weekMatches.forEach(match => {
+                // Симулируем матч
+                const homePlayers = gameData.players.filter(p => p.team === match.home);
+                const awayPlayers = gameData.players.filter(p => p.team === match.away);
+
+                const homeStrength = calculateTeamStrength(homePlayers);
+                const awayStrength = calculateTeamStrength(awayPlayers);
+
+                // Генерируем счет на основе силы команд
+                let homeScore = 0;
+                let awayScore = 0;
+
+                // Симулируем голы (упрощенная версия)
+                for (let i = 0; i < 10; i++) {
+                    const homeChance = homeStrength / 100;
+                    const awayChance = awayStrength / 100;
+
+                    if (Math.random() < homeChance) homeScore++;
+                    if (Math.random() < awayChance) awayScore++;
+                }
+
+                // Устанавливаем счет
+                match.homeScore = homeScore;
+                match.awayScore = awayScore;
+                match.played = true;
+
+                // Обновляем турнирную таблицу
+                updateLeagueTableForMatch(match);
+            });
+        }
+
+        function updateLeagueTableForMatch(match) {
+            const homeTeamRow = gameData.leagueTable.find(t => t.team === match.home);
+            const awayTeamRow = gameData.leagueTable.find(t => t.team === match.away);
+
+            if (!homeTeamRow || !awayTeamRow) return;
+
+            homeTeamRow.played++;
+            awayTeamRow.played++;
+
+            homeTeamRow.goalsFor += match.homeScore;
+            homeTeamRow.goalsAgainst += match.awayScore;
+
+            awayTeamRow.goalsFor += match.awayScore;
+            awayTeamRow.goalsAgainst += match.homeScore;
+
+            if (match.homeScore > match.awayScore) {
+                homeTeamRow.won++;
+                homeTeamRow.points += 3;
+                awayTeamRow.lost++;
+            } else if (match.homeScore < match.awayScore) {
+                awayTeamRow.won++;
+                awayTeamRow.points += 3;
+                homeTeamRow.lost++;
+            } else {
+                homeTeamRow.drawn++;
+                awayTeamRow.drawn++;
+                homeTeamRow.points += 1;
+                awayTeamRow.points += 1;
+            }
+        }
+
+        function addMatchEvent(text, delay, fastSimulation) {
+            if (fastSimulation) return;
+            
+            setTimeout(() => {
+                const eventElement = document.createElement('div');
+                eventElement.className = 'event';
+                eventElement.innerHTML = `<i class="fas fa-futbol"></i> ${text}`;
+                
+                const eventsContainer = document.getElementById('match-events');
+                eventsContainer.appendChild(eventElement);
+                eventsContainer.scrollTop = eventsContainer.scrollHeight;
+            }, delay);
+        }
+
+        function updateScore(homeScore, awayScore, fastSimulation) {
+            if (fastSimulation) return;
+            
+            setTimeout(() => {
+                document.getElementById('match-score').textContent = `${homeScore} : ${awayScore}`;
+            }, 500);
+        }
+
+        function calculateTeamStrength(players) {
+            let strength = 0;
+            players.forEach(player => {
+                strength += player.rating;
+            });
+            return strength / players.length;
+        }
+
+        function updateLeagueTable() {
+            const match = gameData.currentMatch;
+            
+            // Находим записи команд в таблице
+            const homeTeamRow = gameData.leagueTable.find(t => t.team === match.home);
+            const awayTeamRow = gameData.leagueTable.find(t => t.team === match.away);
+            
+            if (!homeTeamRow || !awayTeamRow) return;
+            
+            // Обновляем статистику
+            homeTeamRow.played++;
+            awayTeamRow.played++;
+            
+            homeTeamRow.goalsFor += match.homeScore;
+            homeTeamRow.goalsAgainst += match.awayScore;
+            
+            awayTeamRow.goalsFor += match.awayScore;
+            awayTeamRow.goalsAgainst += match.homeScore;
+            
+            if (match.homeScore > match.awayScore) {
+                homeTeamRow.won++;
+                homeTeamRow.points += 3;
+                awayTeamRow.lost++;
+            } else if (match.homeScore < match.awayScore) {
+                awayTeamRow.won++;
+                awayTeamRow.points += 3;
+                homeTeamRow.lost++;
+            } else {
+                homeTeamRow.drawn++;
+                awayTeamRow.drawn++;
+                homeTeamRow.points += 1;
+                awayTeamRow.points += 1;
+            }
+            
+            // Обновляем позицию текущей команды
+            const sortedTable = [...gameData.leagueTable].sort((a, b) => {
+                if (b.points !== a.points) return b.points - a.points;
+                const bDiff = b.goalsFor - b.goalsAgainst;
+                const aDiff = a.goalsFor - a.goalsAgainst;
+                if (bDiff !== aDiff) return bDiff - aDiff;
+                return b.goalsFor - a.goalsFor;
+            });
+            
+            const teamPosition = sortedTable.findIndex(t => t.team === gameData.currentTeam.id) + 1;
+            gameData.currentTeam.position = teamPosition;
+            
+            updateTeamInfo();
+        }
+
+        function initPlayoff() {
+            // Выбираем 8 лучших команд для плей-офф
+            const sortedTable = [...gameData.leagueTable].sort((a, b) => {
+                if (b.points !== a.points) return b.points - a.points;
+                const bDiff = b.goalsFor - b.goalsAgainst;
+                const aDiff = a.goalsFor - a.goalsAgainst;
+                if (bDiff !== aDiff) return bDiff - aDiff;
+                return b.goalsFor - a.goalsFor;
+            });
+            
+            const playoffTeams = sortedTable.slice(0, 8).map(t => t.team);
+            
+            // Создаем сетку плей-офф
+            gameData.playoffMatches = [];
+            
+            // Четвертьфиналы
+            for (let i = 0; i < 4; i++) {
+                gameData.playoffMatches.push({
+                    round: 'quarter',
+                    home: playoffTeams[i * 2],
+                    away: playoffTeams[i * 2 + 1],
+                    homeScore: null,
+                    awayScore: null,
+                    played: false
+                });
+            }
+            
+            // Полуфиналы (будут заполнены после четвертьфиналов)
+            for (let i = 0; i < 2; i++) {
+                gameData.playoffMatches.push({
+                    round: 'semi',
+                    home: null,
+                    away: null,
+                    homeScore: null,
+                    awayScore: null,
+                    played: false
+                });
+            }
+            
+            // Финал
+            gameData.playoffMatches.push({
+                round: 'final',
+                home: null,
+                away: null,
+                homeScore: null,
+                awayScore: null,
+                played: false
+            });
+            
+            // Загружаем сетку плей-офф
+            loadPlayoffBracket();
+        }
+
+        function loadPlayoffBracket() {
+            const container = document.getElementById('playoff-bracket');
+            container.innerHTML = '';
+            
+            const rounds = ['quarter', 'semi', 'final'];
+            
+            rounds.forEach(round => {
+                const roundDiv = document.createElement('div');
+                roundDiv.className = 'playoff-round';
+                
+                const title = document.createElement('div');
+                title.className = 'round-title';
+                
+                if (round === 'quarter') title.textContent = 'Четвертьфиналы';
+                else if (round === 'semi') title.textContent = 'Полуфиналы';
+                else title.textContent = 'Финал';
+                
+                roundDiv.appendChild(title);
+                
+                const roundMatches = gameData.playoffMatches.filter(m => m.round === round);
+                
+                roundMatches.forEach(match => {
+                    const homeTeam = gameData.teams.find(t => t.id === match.home);
+                    const awayTeam = gameData.teams.find(t => t.id === match.away);
+                    
+                    const matchDiv = document.createElement('div');
+                    matchDiv.className = 'playoff-match';
+                    
+                    let homeName = match.home ? homeTeam.name : 'TBD';
+                    let awayName = match.away ? awayTeam.name : 'TBD';
+                    
+                    if (match.played) {
+                        const homeClass = match.homeScore > match.awayScore ? 'winner' : '';
+                        const awayClass = match.awayScore > match.homeScore ? 'winner' : '';
+                        
+                        matchDiv.innerHTML = `
+                            <div class="playoff-team ${homeClass}">${homeName}</div>
+                            <div class="playoff-score">${match.homeScore} - ${match.awayScore}</div>
+                            <div class="playoff-team ${awayClass}">${awayName}</div>
+                        `;
+                    } else {
+                        matchDiv.innerHTML = `
+                            <div class="playoff-team">${homeName}</div>
+                            <div class="playoff-score">vs</div>
+                            <div class="playoff-team">${awayName}</div>
+                        `;
+                    }
+                    
+                    roundDiv.appendChild(matchDiv);
+                });
+                
+                container.appendChild(roundDiv);
+            });
+        }
+
+        function updateTacticsPitch() {
+            const pitch = document.getElementById('pitch');
+            pitch.innerHTML = '<div class="pitch-lines"></div>';
+            
+            // Позиции игроков в зависимости от формации
+            const positions = {
+                '4-4-2': [
+                    { top: '85%', left: '50%' }, // GK
+                    { top: '65%', left: '20%' }, // DEF
+                    { top: '65%', left: '35%' }, // DEF
+                    { top: '65%', left: '65%' }, // DEF
+                    { top: '65%', left: '80%' }, // DEF
+                    { top: '45%', left: '25%' }, // MID
+                    { top: '45%', left: '50%' }, // MID
+                    { top: '45%', left: '75%' }, // MID
+                    { top: '25%', left: '35%' }, // ATT
+                    { top: '25%', left: '65%' }  // ATT
+                ],
+                '4-3-3': [
+                    { top: '85%', left: '50%' }, // GK
+                    { top: '65%', left: '20%' }, // DEF
+                    { top: '65%', left: '35%' }, // DEF
+                    { top: '65%', left: '65%' }, // DEF
+                    { top: '65%', left: '80%' }, // DEF
+                    { top: '45%', left: '35%' }, // MID
+                    { top: '45%', left: '50%' }, // MID
+                    { top: '45%', left: '65%' }, // MID
+                    { top: '25%', left: '25%' }, // ATT
+                    { top: '25%', left: '50%' }, // ATT
+                    { top: '25%', left: '75%' }  // ATT
+                ],
+                '4-2-3-1': [
+                    { top: '85%', left: '50%' }, // GK
+                    { top: '65%', left: '20%' }, // DEF
+                    { top: '65%', left: '35%' }, // DEF
+                    { top: '65%', left: '65%' }, // DEF
+                    { top: '65%', left: '80%' }, // DEF
+                    { top: '55%', left: '35%' }, // MID
+                    { top: '55%', left: '65%' }, // MID
+                    { top: '40%', left: '25%' }, // MID
+                    { top: '40%', left: '50%' }, // MID
+                    { top: '40%', left: '75%' }, // MID
+                    { top: '25%', left: '50%' }  // ATT
+                ],
+                '3-5-2': [
+                    { top: '85%', left: '50%' }, // GK
+                    { top: '65%', left: '25%' }, // DEF
+                    { top: '65%', left: '50%' }, // DEF
+                    { top: '65%', left: '75%' }, // DEF
+                    { top: '50%', left: '15%' }, // MID
+                    { top: '50%', left: '35%' }, // MID
+                    { top: '50%', left: '50%' }, // MID
+                    { top: '50%', left: '65%' }, // MID
+                    { top: '50%', left: '85%' }, // MID
+                    { top: '30%', left: '35%' }, // ATT
+                    { top: '30%', left: '65%' }  // ATT
+                ]
+            };
+            
+            // Получаем игроков текущей команды
+            const teamPlayers = gameData.players.filter(p => p.team === gameData.currentTeam.id);
+            
+            // Отображаем игроков на поле
+            const formationPositions = positions[gameData.formation];
+            for (let i = 0; i < formationPositions.length && i < teamPlayers.length; i++) {
+                const player = teamPlayers[i];
+                const position = formationPositions[i];
+                
+                const playerElement = document.createElement('div');
+                playerElement.className = 'player-position';
+                playerElement.style.top = position.top;
+                playerElement.style.left = position.left;
+                playerElement.textContent = player.position;
+                playerElement.title = `${player.name} (${player.rating})`;
+                
+                pitch.appendChild(playerElement);
+            }
+        }
+
+        function updateStadiumInfo() {
+            const stadium = gameData.currentTeam.stadium;
+            
+            document.getElementById('stadium-name').textContent = stadium.name;
+            document.getElementById('stadium-level').textContent = stadium.level;
+            document.getElementById('stadium-capacity').textContent = stadium.capacity.toLocaleString();
+            document.getElementById('stadium-comfort').textContent = stadium.comfort;
+            document.getElementById('stadium-income').textContent = (stadium.income / 1000).toFixed(0) + 'K';
+            document.getElementById('stadium-rating').textContent = stadium.rating.toFixed(1);
+            
+            // Обновляем прогресс-бары
+            document.querySelectorAll('#stadium-capacity ~ .stat-bar .stat-fill').forEach(el => {
+                el.style.width = (stadium.capacity / 50000 * 100) + '%';
+            });
+            
+            document.querySelectorAll('#stadium-comfort ~ .stat-bar .stat-fill').forEach(el => {
+                el.style.width = stadium.comfort + '%';
+            });
+            
+            document.querySelectorAll('#stadium-income ~ .stat-bar .stat-fill').forEach(el => {
+                el.style.width = (stadium.income / 2000000 * 100) + '%';
+            });
+            
+            document.querySelectorAll('#stadium-rating ~ .stat-bar .stat-fill').forEach(el => {
+                el.style.width = (stadium.rating / 5 * 100) + '%';
+            });
+        }
+
+        function upgradeStadium(upgradeType) {
+            const stadium = gameData.currentTeam.stadium;
+            let cost = 0;
+            
+            switch (upgradeType) {
+                case 'capacity':
+                    cost = 0.5;
+                    if (gameData.currentTeam.budget >= cost) {
+                        gameData.currentTeam.budget -= cost;
+                        stadium.capacity += 5000;
+                        stadium.income += 100000;
+                        showModal('Улучшение', 'Вместимость стадиона увеличена на 5000 мест!');
+                    } else {
+                        showModal('Ошибка', 'Недостаточно средств для улучшения');
+                        return;
+                    }
+                    break;
+                    
+                case 'comfort':
+                    cost = 0.3;
+                    if (gameData.currentTeam.budget >= cost) {
+                        gameData.currentTeam.budget -= cost;
+                        stadium.comfort += 10;
+                        stadium.income += 50000;
+                        showModal('Улучшение', 'Комфорт стадиона увеличен на 10%!');
+                    } else {
+                        showModal('Ошибка', 'Недостаточно средств для улучшения');
+                        return;
+                    }
+                    break;
+                    
+                case 'rating':
+                    cost = 0.4;
+                    if (gameData.currentTeam.budget >= cost) {
+                        gameData.currentTeam.budget -= cost;
+                        stadium.rating += 0.5;
+                        stadium.income += 75000;
+                        showModal('Улучшение', 'Рейтинг стадиона увеличен на 0.5!');
+                    } else {
+                        showModal('Ошибка', 'Недостаточно средств для улучшения');
+                        return;
+                    }
+                    break;
+            }
+            
+            // Обновляем информацию
+            updateTeamInfo();
+            updateStadiumInfo();
+            updateFinanceInfo();
+        }
+
+        function updateFinanceInfo() {
+            const stadium = gameData.currentTeam.stadium;
+            
+            document.getElementById('finance-budget').textContent = gameData.currentTeam.budget.toFixed(1) + 'M €';
+            
+            // Рассчитываем зарплатный фонд
+            const teamPlayers = gameData.players.filter(p => p.team === gameData.currentTeam.id);
+            const salaryTotal = teamPlayers.reduce((sum, player) => sum + player.salary, 0);
+            document.getElementById('finance-salary').textContent = salaryTotal.toFixed(2) + 'M €';
+            
+            // Призовые (случайные для демонстрации)
+            const prizeMoney = Math.random() * 0.5 + 0.2;
+            document.getElementById('finance-prize').textContent = prizeMoney.toFixed(2) + 'M €';
+            
+            // Доход с билетов
+            const ticketIncome = stadium.income / 1000000;
+            document.getElementById('finance-ticket').textContent = ticketIncome.toFixed(2) + 'M €';
+            
+            // Изменения (случайные для демонстрации)
+            document.getElementById('finance-budget-change').textContent = '+0.2M € за месяц';
+            document.getElementById('finance-salary-change').textContent = '-0.1M € за месяц';
+            document.getElementById('finance-prize-change').textContent = '+0.15M € за месяц';
+            document.getElementById('finance-ticket-change').textContent = '+0.05M € за месяц';
+        }
+
+        function initExchangeTab() {
+            // Заполняем список своих игроков
+            const myTeamSelect = document.getElementById('my-team-select');
+            myTeamSelect.innerHTML = '<option value="">Выберите игрока для обмена</option>';
+            
+            const myPlayers = gameData.players.filter(p => p.team === gameData.currentTeam.id);
+            myPlayers.forEach(player => {
+                const option = document.createElement('option');
+                option.value = player.id;
+                option.textContent = `${player.name} (${getPositionName(player.position)}, ${player.value.toFixed(1)}M €)`;
+                myTeamSelect.appendChild(option);
+            });
+            
+            // Заполняем список команд для обмена
+            const opponentTeamSelect = document.getElementById('opponent-team-select');
+            opponentTeamSelect.innerHTML = '<option value="">Выберите команду</option>';
+            
+            gameData.teams.forEach(team => {
+                if (team.id !== gameData.currentTeam.id) {
+                    const option = document.createElement('option');
+                    option.value = team.id;
+                    option.textContent = team.name;
+                    opponentTeamSelect.appendChild(option);
+                }
+            });
+            
+            // Сбрасываем значения доплат
+            document.getElementById('my-team-money').value = '0';
+            document.getElementById('opponent-team-money').value = '0';
+        }
+
+        function updateOpponentPlayers() {
+            const teamId = document.getElementById('opponent-team-select').value;
+            if (!teamId) return;
+            
+            const playerSelect = document.getElementById('opponent-player-select');
+            playerSelect.innerHTML = '<option value="">Выберите игрока</option>';
+            
+            const players = gameData.players.filter(p => p.team === teamId);
+            players.forEach(player => {
+                const option = document.createElement('option');
+                option.value = player.id;
+                option.textContent = `${player.name} (${getPositionName(player.position)}, ${player.value.toFixed(1)}M €)`;
+                playerSelect.appendChild(option);
+            });
+        }
+
+        function proposeExchange() {
+            const myPlayerId = parseInt(document.getElementById('my-team-select').value);
+            const opponentPlayerId = parseInt(document.getElementById('opponent-player-select').value);
+            const myMoney = parseFloat(document.getElementById('my-team-money').value) || 0;
+            const opponentMoney = parseFloat(document.getElementById('opponent-team-money').value) || 0;
+            
+            if (!myPlayerId || !opponentPlayerId) {
+                showModal('Ошибка', 'Выберите обоих игроков для обмена');
+                return;
+            }
+            
+            const myPlayer = gameData.players.find(p => p.id === myPlayerId);
+            const opponentPlayer = gameData.players.find(p => p.id === opponentPlayerId);
+            const opponentTeam = gameData.teams.find(t => t.id === opponentPlayer.team);
+            
+            // Проверяем, достаточно ли средств у команд
+            if (myMoney > gameData.currentTeam.budget) {
+                showModal('Ошибка', 'Недостаточно средств для доплаты');
+                return;
+            }
+            
+            if (opponentMoney > opponentTeam.budget) {
+                showModal('Ошибка', 'У выбранной команды недостаточно средств для доплаты');
+                return;
+            }
+            
+            // Рассчитываем общую стоимость обмена
+            const myTotalValue = myPlayer.value + myMoney;
+            const opponentTotalValue = opponentPlayer.value + opponentMoney;
+            
+            // Шанс успеха обмена зависит от разницы в стоимости
+            const valueDiff = Math.abs(myTotalValue - opponentTotalValue);
+            const successChance = valueDiff < 5 ? 0.7 : 0.3;
+            
+            if (Math.random() < successChance) {
+                // Обмен успешен
+                
+                // Меняем команды игроков
+                myPlayer.team = opponentTeam.id;
+                opponentPlayer.team = gameData.currentTeam.id;
+                
+                // Обмениваем деньги
+                gameData.currentTeam.budget = gameData.currentTeam.budget - myMoney + opponentMoney;
+                opponentTeam.budget = opponentTeam.budget - opponentMoney + myMoney;
+                
+                showModal('Успех', `Обмен прошел успешно! Вы получили ${opponentPlayer.name} и ${opponentMoney.toFixed(1)}M € в обмен на ${myPlayer.name} и ${myMoney.toFixed(1)}M €`);
+                
+                // Обновляем информацию
+                updateTeamInfo();
+                loadTeamPlayers();
+                initExchangeTab();
+            } else {
+                showModal('Отказ', 'Предложенный обмен был отклонен командой соперника');
+            }
+        }
+
+        function getPositionName(positionCode) {
+            switch (positionCode) {
+                case 'GK': return 'Вратарь';
+                case 'DEF': return 'Защитник';
+                case 'MID': return 'Полузащитник';
+                case 'ATT': return 'Нападающий';
+                default: return positionCode;
+            }
+        }
+
+        function showModal(title, message) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function saveGame() {
+            const saveData = JSON.stringify({
+                currentTeam: gameData.currentTeam,
+                players: gameData.players,
+                matches: gameData.matches,
+                leagueTable: gameData.leagueTable,
+                playoffMatches: gameData.playoffMatches,
+                week: gameData.week,
+                season: gameData.season,
+                isPlayoff: gameData.isPlayoff
+            });
+            
+            localStorage.setItem('rplManagerSave', saveData);
+        }
+
+        function loadGame() {
+            const saveData = localStorage.getItem('rplManagerSave');
+            
+            if (!saveData) return false;
+            
+            try {
+                const data = JSON.parse(saveData);
+                
+                gameData.currentTeam = data.currentTeam;
+                gameData.players = data.players;
+                gameData.matches = data.matches;
+                gameData.leagueTable = data.leagueTable;
+                gameData.playoffMatches = data.playoffMatches;
+                gameData.week = data.week;
+                gameData.season = data.season;
+                gameData.isPlayoff = data.isPlayoff;
+                
+                return true;
+            } catch (e) {
+                console.error('Ошибка загрузки игры:', e);
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>
