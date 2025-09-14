@@ -1,4 +1,3 @@
-а
 <html lang="ru">
 <head>
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -29,7 +28,7 @@
         }
 
         .container {
-            max-width: 1450px;
+            max-width: 1600px;
             margin: 0 auto;
             background-color: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
@@ -63,7 +62,7 @@
         }
 
         .sidebar {
-            width: 400px;
+            width: 550px;
             background-color: #f5f5f5;
             padding: 20px;
             border-right: 2px solid #ddd;
@@ -555,11 +554,12 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
             .team-card:hover {
-                transform: translateY(-5px);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
             }
 
             .team-card.selected {
@@ -677,6 +677,13 @@
 
         .btn-buy {
             background-color: #4caf50;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
         }
 
             .btn-buy:hover {
@@ -820,10 +827,19 @@
         }
 
         .playoff-team {
+            font-weight: 500;
+            padding: 5px 0;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            padding: 5px;
+            font-size: 0.9em;
         }
+
+            .playoff-team .rating {
+                font-size: 0.8em;
+                color: #666;
+                margin-left: 5px;
+            }
 
             .playoff-team.winner {
                 font-weight: bold;
@@ -948,6 +964,20 @@
                 flex-direction: column;
             }
         }
+
+        .rating-stars {
+            display: inline-flex;
+            margin-left: 5px;
+        }
+
+        .star {
+            color: #ffd700;
+            font-size: 0.8rem;
+        }
+
+            .star.empty {
+                color: #ddd;
+            }
 
         .calendar-toggle {
             display: flex;
@@ -1093,6 +1123,7 @@
                         <div class="stats">
                             <div class="stat">€Бюджет: <span id="current-budget">0</span>M</div>
                             <div class="stat">Место: <span id="current-position">-</span></div>
+                            <div class="stat">Рейтинг: <span id="current-rating">0</span></div>
                         </div>
                     </div>
                 </div>
@@ -1126,6 +1157,7 @@
                         <div class="main-menu-buttons">
                             <button class="btn main-menu-btn" id="new-game-btn"><i class="fas fa-plus"></i> Новая игра</button>
                             <button class="btn main-menu-btn" id="load-game-btn"><i class="fas fa-download"></i> Загрузить игру</button>
+
                         </div>
                     </div>
                 </div>
@@ -1148,6 +1180,9 @@
                 <!-- Экран состава -->
                 <div class="screen" id="squad">
                     <h2 class="screen-title">Состав команды</h2>
+                    <button class="btn" onclick="showAllTeams()" style="width: 250px;">
+                        <i class="fas fa-list"></i> Просмотреть все команды
+                    </button>
                     <div class="players-grid" id="players-container">
                         <!-- Игроки будут добавлены через JavaScript -->
                     </div>
@@ -1315,7 +1350,7 @@
                         <thead>
                             <tr>
                                 <th>Поз</th>
-                                <th>Команда</th>
+                                <th>Команда (ОБЩ)</th>
                                 <th>И</th>
                                 <th>В</th>
                                 <th>Н</th>
@@ -1445,6 +1480,7 @@
                     logo: 'https://img.championat.com/team/logo/14658385841081757673.png',
                     budget: 5.2,
                     position: 1,
+                    rating: 0,
                     stadium: {
                         name: 'Газпром Арена',
                         level: 1,
@@ -1460,6 +1496,7 @@
                     logo: 'https://img.championat.com/team/logo/16523023911931541032.png',
                     budget: 4.1,
                     position: 2,
+                    rating: 0,
                     stadium: {
                         name: 'Открытие Банк Арена',
                         level: 1,
@@ -1475,6 +1512,7 @@
                     logo: 'https://img.championat.com/team/logo/1465837941322079237.png',
                     budget: 3.8,
                     position: 3,
+                    rating: 0,
                     stadium: {
                         name: 'ВЭБ Арена',
                         level: 1,
@@ -1490,6 +1528,7 @@
                     logo: 'https://img.championat.com/team/logo/1465838729886051809.png',
                     budget: 3.5,
                     position: 4,
+                    rating: 0,
                     stadium: {
                         name: 'ВТБ Арена',
                         level: 1,
@@ -1505,6 +1544,7 @@
                     logo: 'https://img.championat.com/team/logo/14676324111013772033.png',
                     budget: 3.2,
                     position: 5,
+                    rating: 0,
                     stadium: {
                         name: 'Стадион Краснодар',
                         level: 1,
@@ -1520,6 +1560,7 @@
                     logo: 'https://img.championat.com/team/logo/14658384771344549206.png',
                     budget: 3.0,
                     position: 6,
+                    rating: 0,
                     stadium: {
                         name: 'РЖД Арена',
                         level: 1,
@@ -1535,6 +1576,7 @@
                     logo: 'https://img.championat.com/team/logo/14658384351941932061.png',
                     budget: 2.8,
                     position: 7,
+                    rating: 0,
                     stadium: {
                         name: 'Ростов Арена',
                         level: 1,
@@ -1550,6 +1592,7 @@
                     logo: 'https://img.championat.com/team/logo/1501229909577937100.png',
                     budget: 2.5,
                     position: 8,
+                    rating: 0,
                     stadium: {
                         name: 'Ахмат-Арена',
                         level: 1,
@@ -1565,6 +1608,7 @@
                     logo: 'https://img.championat.com/team/logo/1531215018203072749.png',
                     budget: 2.7,
                     position: 9,
+                    rating: 0,
                     stadium: {
                         name: 'Фишт',
                         level: 1,
@@ -1580,6 +1624,7 @@
                     logo: 'https://фк-лого.рф/wp-content/uploads/dynamo-makhachkala-logo-145x100.png',
                     budget: 2.1,
                     position: 10,
+                    rating: 0,
                     stadium: {
                         name: 'Динамо',
                         level: 1,
@@ -1595,6 +1640,7 @@
                     logo: 'https://img.championat.com/team/logo/1531481481507005825.png',
                     budget: 2.1,
                     position: 11,
+                    rating: 0,
                     stadium: {
                         name: 'Нижний Новгород',
                         level: 1,
@@ -1610,6 +1656,7 @@
                     logo: 'https://фк-лого.рф/wp-content/uploads/orenburg-logo-145x100.png',
                     budget: 2.0,
                     position: 12,
+                    rating: 0,
                     stadium: {
                         name: 'Газовик',
                         level: 1,
@@ -1625,6 +1672,7 @@
                     logo: 'https://фк-лого.рф/wp-content/uploads/rubin-logo-145x100.png',
                     budget: 2.2,
                     position: 13,
+                    rating: 0,
                     stadium: {
                         name: 'Казань Арена',
                         level: 1,
@@ -1640,6 +1688,7 @@
                     logo: 'https://img.championat.com/team/logo/1465838512157254062.png',
                     budget: 2.4,
                     position: 14,
+                    rating: 0,
                     stadium: {
                         name: 'Солидарность Самара Арена',
                         level: 1,
@@ -1655,6 +1704,7 @@
                     logo: 'https://фк-лого.рф/wp-content/uploads/baltika-logo-2022-145x100.png',
                     budget: 1.9,
                     position: 15,
+                    rating: 0,
                     stadium: {
                         name: 'Ростов Арена',
                         level: 1,
@@ -1670,6 +1720,7 @@
                     logo: 'https://фк-лого.рф/wp-content/uploads/akron-logo-145x100.png',
                     budget: 1.9,
                     position: 16,
+                    rating: 0,
                     stadium: {
                         name: 'Кристалл',
                         level: 1,
@@ -1941,6 +1992,8 @@
             isPlayoff: false
         };
 
+        let viewingTeamId = null;
+
         // Инициализация игры
         document.addEventListener('DOMContentLoaded', function () {
             // Загрузка команд на экран выбора
@@ -2075,19 +2128,17 @@
 
             // Обработка кнопки "Играть матч"
             document.getElementById('play-match').addEventListener('click', function () {
-                document.getElementById('play-match').addEventListener('click', function () {
-                    if (!gameData.currentMatch) {
-                        showModal('Ошибка', 'Нет доступного матча для игры');
-                        return;
-                    }
+                if (!gameData.currentMatch) {
+                    showModal('Ошибка', 'Нет доступного матча для игры');
+                    return;
+                }
 
-                    if (gameData.currentMatch.played) {
-                        showModal('Ошибка', 'Этот матч уже сыгран');
-                        return;
-                    }
+                if (gameData.currentMatch.played) {
+                    showModal('Ошибка', 'Этот матч уже сыгран');
+                    return;
+                }
 
-                    playMatch(false);
-                });
+                playMatch(false);
             });
 
             // Обработка кнопки "Быстрая симуляция"
@@ -2210,7 +2261,7 @@
                     calendarToggle.addEventListener('click', function () {
                         toggleCalendar();
                     });
-                };
+                }
             });
 
 
@@ -2247,6 +2298,14 @@
                     });
                 }
             }, 100);
+
+            const squadScreen = document.getElementById('squad');
+            const viewAllTeamsButton = document.createElement('button');
+            viewAllTeamsButton.className = 'btn';
+            viewAllTeamsButton.style.marginBottom = '20px';
+            viewAllTeamsButton.textContent = 'Просмотреть все команды';
+            viewAllTeamsButton.onclick = showAllTeams;
+            squadScreen.insertBefore(viewAllTeamsButton, squadScreen.querySelector('#players-container'));
         });
 
         // Функции игры
@@ -2288,35 +2347,33 @@
             document.getElementById('playoff-season').textContent = gameData.season;
 
             if (screenId === 'calendar') {
-                // Инициализация обработчика сворачивания календаря
                 const calendarToggle = document.querySelector('.calendar-toggle');
                 const calendarContent = document.getElementById('calendar-content');
 
                 if (calendarToggle && calendarContent) {
                     calendarToggle.onclick = function () {
-                        calendarContent.classList.toggle('hidden');
-                        const icon = this.querySelector('i');
-                        if (icon) {
-                            icon.style.transform = calendarContent.classList.contains('hidden') ?
-                                'rotate(0deg)' : 'rotate(180deg)';
-                        }
+                        toggleCalendar();
                     };
                 }
             }
         }
 
         function initGameData() {
-            // Полностью переписываем инициализацию матчей для правильного расписания
+            // Полностью переписываем инициализацию матчей
             gameData.goalScorers = {};
             gameData.matches = [];
+
+            // Получаем ID всех команд
             const teamIds = gameData.teams.map(t => t.id);
 
-            // Генерируем правильное расписание с использованием круговой системы
+            // Генерируем правильное расписание
             const schedule = generateSchedule(teamIds);
 
-            // Заполняем матчи на основе сгенерированного расписания
+            // Создаем матчи на основе расписания
             for (let week = 0; week < schedule.length; week++) {
-                for (let match of schedule[week]) {
+                const weekMatches = schedule[week];
+
+                for (let match of weekMatches) {
                     gameData.matches.push({
                         week: week + 1,
                         home: match.home,
@@ -2356,43 +2413,39 @@
         function generateSchedule(teams) {
             const schedule = [];
             const numTeams = teams.length;
-            const rounds = numTeams - 1;
-            const half = numTeams / 2;
 
-            // Создаем копию массива команд
-            let teamList = [...teams];
+            // Создаем пары для каждого тура (круговая система)
+            for (let i = 0; i < numTeams - 1; i++) {
+                const round = [];
 
-            // Первый круг
-            for (let round = 0; round < rounds; round++) {
-                const roundMatches = [];
+                for (let j = 0; j < numTeams / 2; j++) {
+                    const home = teams[j];
+                    const away = teams[numTeams - 1 - j];
 
-                for (let i = 0; i < half; i++) {
-                    // Пропускаем матч с "призрачной" командой, если количество нечетное
-                    if (teamList[i] !== null && teamList[numTeams - 1 - i] !== null) {
-                        roundMatches.push({
-                            home: teamList[i],
-                            away: teamList[numTeams - 1 - i]
+                    if (home && away) { // Проверяем, что обе команды существуют
+                        round.push({
+                            home: home,
+                            away: away
                         });
                     }
                 }
 
-                schedule.push(roundMatches);
+                schedule.push(round);
 
-                // Вращаем команды по круговой системе (фиксируем первую команду)
-                teamList.splice(1, 0, teamList.pop());
+                // Вращаем команды (кроме первой)
+                teams.splice(1, 0, teams.pop());
             }
 
-            // Второй круг - инвертируем домашние и гостевые матчи
+            // Второй круг (домашние и гостевые матчи меняются местами)
             const secondRound = [];
-            for (let round = 0; round < rounds; round++) {
-                const roundMatches = schedule[round].map(match => ({
+            for (let i = 0; i < schedule.length; i++) {
+                const round = schedule[i].map(match => ({
                     home: match.away,
                     away: match.home
                 }));
-                secondRound.push(roundMatches);
+                secondRound.push(round);
             }
 
-            // Объединяем первый и второй круг
             return schedule.concat(secondRound);
         }
 
@@ -2404,10 +2457,11 @@
             document.getElementById('current-team-logo-img').alt = gameData.currentTeam.name;
             document.getElementById('current-team-name').textContent = gameData.currentTeam.name;
             document.getElementById('current-budget').textContent = gameData.currentTeam.budget.toFixed(1);
+            document.getElementById('current-rating').textContent = gameData.currentTeam.rating;
+            document.getElementById('current-rating').innerHTML += getStarRating(gameData.currentTeam.rating);
 
-            // ПРАВИЛЬНОЕ ОБНОВЛЕНИЕ ПОЗИЦИИ
+
             updateTeamPosition();
-
             document.getElementById('finance-budget').textContent = gameData.currentTeam.budget.toFixed(1) + 'M €';
         }
 
@@ -2429,6 +2483,15 @@
             const container = document.getElementById('players-container');
             container.innerHTML = '';
 
+            // Добавляем кнопку просмотра всех команд
+            const viewAllButton = document.createElement('button');
+            viewAllButton.className = 'btn';
+            viewAllButton.style.marginBottom = '20px';
+            viewAllButton.innerHTML = '<i class="fas fa-list"></i> Просмотреть все команды';
+            viewAllButton.onclick = showAllTeams;
+            container.appendChild(viewAllButton);
+
+            // Остальной код функции остается без изменений...
             const teamPlayers = gameData.players.filter(p => p.team === gameData.currentTeam.id);
 
             teamPlayers.forEach(player => {
@@ -2498,14 +2561,14 @@
                 const card = document.createElement('div');
                 card.className = 'transfer-player-card';
                 card.innerHTML = `
-                        <div class="transfer-player-info">
-                            <div style="font-weight: bold; color: #0039a6;">${player.name}</div>
-                            <div>${getPositionName(player.position)} • ${player.age} года • ${player.nationality}</div>
-                            <div>Рейтинг: ${player.rating} | Атака: ${player.attack} | Защита: ${player.defense} | Форма: ${player.form}</div>
-                        </div>
-                        <div class="transfer-player-price">${player.value.toFixed(1)}M €</div>
-                        <button class="btn btn-buy" data-id="${player.id}">Купить</button>
-                    `;
+            <div class="transfer-player-info">
+                <div style="font-weight: bold; color: #0039a6;">${player.name}</div>
+                <div>${getPositionName(player.position)} • ${player.age} года • ${player.nationality}</div>
+                <div>Рейтинг: ${player.rating} | Атака: ${player.attack} | Защита: ${player.defense} | Форма: ${player.form}</div>
+            </div>
+            <div class="transfer-player-price">${player.value.toFixed(1)}M €</div>
+            <button class="btn btn-buy" data-id="${player.id}">Купить</button>
+        `;
 
                 container.appendChild(card);
             });
@@ -2517,38 +2580,36 @@
                     buyPlayer(playerId);
                 });
             });
-
-            document.getElementById('next-week-btn').addEventListener('click', function () {
-                if (gameData.isPlayoff) {
-                    // Для плей-офф обрабатываем текущий раунд
-                    processPlayoffRound();
-                } else {
-                    // Для регулярного сезона используем существующую логику
-                    nextWeek();
-                }
-            });
-
         }
 
-        function buyPlayer(playerId) {
+
+        function buyPlayer(playerId, buyingTeamId = null) {
             const player = gameData.transferPlayers.find(p => p.id === playerId);
+            const buyingTeam = buyingTeamId ?
+                gameData.teams.find(t => t.id === buyingTeamId) :
+                gameData.currentTeam;
 
-            if (!player) return;
+            if (!player || !buyingTeam) return;
 
-            if (gameData.currentTeam.budget >= player.value) {
-                gameData.currentTeam.budget -= player.value;
-                player.team = gameData.currentTeam.id;
+            if (buyingTeam.budget >= player.value) {
+                buyingTeam.budget -= player.value;
+                player.team = buyingTeam.id;
                 gameData.players.push(player);
                 gameData.transferPlayers = gameData.transferPlayers.filter(p => p.id !== playerId);
 
-                updateTeamInfo();
-                loadTeamPlayers();
-                loadTransferPlayers();
+                // Обновляем информацию только если покупает текущая команда
+                if (!buyingTeamId || buyingTeamId === gameData.currentTeam.id) {
+                    updateTeamInfo();
+                    loadTeamPlayers();
+                    loadTransferPlayers();
+                }
 
-                showModal('Трансфер', `Вы успешно приобрели ${player.name} за ${player.value.toFixed(1)}M €!`);
+                showModal('Трансфер', `${buyingTeam.name} приобрела ${player.name} за ${player.value.toFixed(1)}M €!`);
             } else {
-                showModal('Трансфер', 'Недостаточно средств для покупки этого игрока');
+                showModal('Трансфер', `У ${buyingTeam.name} недостаточно средств для покупки этого игрока`);
             }
+
+            updateAllTeamRatings();
         }
 
         function loadMatches() {
@@ -2585,9 +2646,9 @@
 
             // Показываем/скрываем кнопку следующей недели
             const nextWeekBtn = document.getElementById('next-week-btn');
-            const currentMatch = getCurrentTeamMatch();
+            const allMatchesPlayed = currentWeekMatches.every(m => m.played);
 
-            if (currentMatch && currentMatch.played) {
+            if (allMatchesPlayed) {
                 nextWeekBtn.style.display = 'block';
             } else {
                 nextWeekBtn.style.display = 'none';
@@ -2629,16 +2690,16 @@
                 const team = gameData.teams.find(t => t.id === row.team);
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${team.name}</td>
-                        <td>${row.played}</td>
-                        <td>${row.won}</td>
-                        <td>${row.drawn}</td>
-                        <td>${row.lost}</td>
-                        <td>${row.goalsFor}</td>
-                        <td>${row.goalsAgainst}</td>
-                        <td>${row.goalsFor - row.goalsAgainst}</td>
-                        <td><strong>${row.points}</strong></td>
+                    <td>${index + 1}</td>
+                    <td>${team.name} <span style="color: #888; font-size: 0.9em;">(${team.rating}★)</span></td>
+                    <td>${row.played}</td>
+                    <td>${row.won}</td>
+                    <td>${row.drawn}</td>
+                    <td>${row.lost}</td>
+                    <td>${row.goalsFor}</td>
+                    <td>${row.goalsAgainst}</td>
+                    <td>${row.goalsFor - row.goalsAgainst}</td>
+                    <td><strong>${row.points}</strong></td>
                     `;
 
                 tbody.appendChild(tr);
@@ -2646,55 +2707,26 @@
         }
 
         function updateNextMatch() {
-            // СБРАСЫВАЕМ СЧЕТ ПРИ ОБНОВЛЕНИИ
+            // Сбрасываем счет
             document.getElementById('match-score').textContent = '0 : 0';
             document.getElementById('match-events').innerHTML = '<div class="event"><i class="fas fa-info-circle"></i> Матч скоро начнется</div>';
 
             // Сбрасываем текущий матч
             gameData.currentMatch = null;
 
+            // Проверяем, не завершился ли регулярный сезон
+            if (gameData.week > 30 && !gameData.isPlayoff) {
+                initPlayoff();
+                gameData.isPlayoff = true;
+                showModal('Регулярный сезон', 'Регулярный сезон завершен! Начинается плей-офф за Кубок России.');
+                return;
+            }
+
             if (gameData.isPlayoff) {
-                // ЛОГИКА ДЛЯ ПЛЕЙ-ОФФ - ищем первый доступный матч с участием нашей команды
-                const nextPlayoffMatch = gameData.playoffMatches.find(m =>
-                    !m.played &&
-                    (m.home === gameData.currentTeam.id || m.away === gameData.currentTeam.id)
-                );
-
-                if (nextPlayoffMatch && nextPlayoffMatch.home && nextPlayoffMatch.away) {
-                    const homeTeam = gameData.teams.find(t => t.id === nextPlayoffMatch.home);
-                    const awayTeam = gameData.teams.find(t => t.id === nextPlayoffMatch.away);
-
-                    if (homeTeam && awayTeam) {
-                        document.getElementById('home-team-logo-img').src = homeTeam.logo;
-                        document.getElementById('home-team-logo-img').alt = homeTeam.name;
-                        document.getElementById('home-team-name').textContent = homeTeam.name;
-                        document.getElementById('away-team-logo-img').src = awayTeam.logo;
-                        document.getElementById('away-team-logo-img').alt = awayTeam.name;
-                        document.getElementById('away-team-name').textContent = awayTeam.name;
-
-                        document.getElementById('play-match').disabled = false;
-                        document.getElementById('simulate-match').disabled = false;
-
-                        gameData.currentMatch = nextPlayoffMatch;
-
-                        // Скрываем кнопку следующей недели, если есть непрошедший матч
-                        document.getElementById('next-week-btn').style.display = 'none';
-                        return;
-                    }
-                }
-
-                // Если нет текущих матчей плей-офф для нашей команды
-                document.getElementById('home-team-name').textContent = 'Ожидание';
-                document.getElementById('away-team-name').textContent = 'Ожидание';
-                document.getElementById('match-score').textContent = '- : -';
-                document.getElementById('play-match').disabled = true;
-                document.getElementById('simulate-match').disabled = true;
-
-                // Показываем кнопку следующей недели для продвижения плей-офф
-                document.getElementById('next-week-btn').style.display = 'block';
-
+                // Логика для плей-офф
+                // ... (оставьте существующую логику для плей-офф)
             } else {
-                // ЛОГИКА ДЛЯ РЕГУЛЯРНОГО СЕЗОНА
+                // Логика для регулярного сезона
                 const nextMatch = gameData.matches.find(m =>
                     m.week === gameData.week &&
                     !m.played &&
@@ -2707,10 +2739,10 @@
 
                     document.getElementById('home-team-logo-img').src = homeTeam.logo;
                     document.getElementById('home-team-logo-img').alt = homeTeam.name;
-                    document.getElementById('home-team-name').textContent = homeTeam.name;
+                    document.getElementById('home-team-name').textContent = homeTeam.name + " " + homeTeam.rating + "★";
                     document.getElementById('away-team-logo-img').src = awayTeam.logo;
                     document.getElementById('away-team-logo-img').alt = awayTeam.name;
-                    document.getElementById('away-team-name').textContent = awayTeam.name;
+                    document.getElementById('away-team-name').textContent = awayTeam.name + " " + awayTeam.rating + "★";
 
                     document.getElementById('play-match').disabled = false;
                     document.getElementById('simulate-match').disabled = false;
@@ -2719,27 +2751,189 @@
 
                     document.getElementById('next-week-btn').style.display = 'none';
                 } else {
-                    document.getElementById('home-team-name').textContent = 'Сезон завершен';
-                    document.getElementById('away-team-name').textContent = 'Сезон завершен';
+                    // Если матчей на эту неделю нет, но сезон не завершен
+                    document.getElementById('home-team-name').textContent = 'Нет матчей';
+                    document.getElementById('away-team-name').textContent = 'Нет матчей';
                     document.getElementById('match-score').textContent = '- : -';
                     document.getElementById('play-match').disabled = true;
                     document.getElementById('simulate-match').disabled = true;
-
-                    // Если регулярный сезон завершен, начинаем плей-офф
-                    if (!gameData.isPlayoff) {
-                        initPlayoff();
-                        gameData.isPlayoff = true;
-                        showModal('Регулярный сезон', 'Регулярный сезон завершен! Начинается плей-офф за Кубок России.');
-
-                        // Обновляем интерфейс после инициализации плей-офф
-                        setTimeout(() => {
-                            updateNextMatch();
-                            loadPlayoffBracket();
-                        }, 100);
-                    } else {
-                        document.getElementById('next-week-btn').style.display = 'block';
-                    }
+                    document.getElementById('next-week-btn').style.display = 'block';
                 }
+            }
+        }
+
+        function loadTeamPlayers(teamId = null) {
+            const container = document.getElementById('players-container');
+            container.innerHTML = '';
+
+            // Определяем какую команду показывать
+            const targetTeamId = teamId || gameData.currentTeam.id;
+            const teamPlayers = gameData.players.filter(p => p.team === targetTeamId);
+            const team = gameData.teams.find(t => t.id === targetTeamId);
+
+            // Добавляем заголовок с названием команды
+            const header = document.createElement('div');
+            header.style.marginBottom = '20px';
+            header.style.padding = '10px';
+            header.style.background = 'linear-gradient(to right, #0039a6, #1976d2)';
+            header.style.color = 'white';
+            header.style.borderRadius = '8px';
+            header.style.textAlign = 'center';
+            header.innerHTML = `
+        <h3>Состав команды: ${team.name}</h3>
+        <p>Бюджет: ${team.budget.toFixed(1)}M € | Рейтинг: ${team.rating}</p>
+    `;
+            container.appendChild(header);
+
+            teamPlayers.forEach(player => {
+                const card = document.createElement('div');
+                card.className = 'player-card';
+
+                // Добавляем кнопку покупки, если просматриваем не свою команду
+                const buyButton = teamId && teamId !== gameData.currentTeam.id ?
+                    `<button class="btn btn-buy" style="margin-top: 10px; width: 100%;" 
+                    onclick="buyPlayerFromTeam(${player.id}, '${teamId}')">
+                Купить за ${player.value.toFixed(1)}M €
+            </button>` : '';
+
+                card.innerHTML = `
+            <div class="player-header">
+                <div class="player-name">${player.name}</div>
+                <div class="player-rating">${player.rating}</div>
+            </div>
+            <div class="player-details">
+                ${getPositionName(player.position)} • ${player.age} года • ${player.nationality}
+            </div>
+            <div class="player-stats">
+                <div>
+                    <div>${player.position === 'GK' ? 'Спасения' : 'Атака'}: ${player.attack}</div>
+                    <div class="stat-bar"><div class="stat-fill" style="width: ${player.attack}%"></div></div>
+                </div>
+                <div>
+                    <div>${player.position === 'ATT' ? 'Оборона' : 'Защита'}: ${player.defense}</div>
+                    <div class="stat-bar"><div class="stat-fill" style="width: ${player.defense}%"></div></div>
+                </div>
+            </div>
+            <div style="margin-top: 10px;">
+                <div>Форма: ${player.form}/10</div>
+                <div class="stat-bar"><div class="stat-fill" style="width: ${player.form * 10}%"></div></div>
+            </div>
+            <div style="margin-top: 10px; font-size: 0.9rem;">
+                Зарплата: ${player.salary.toFixed(2)}M € • Стоимость: ${player.value.toFixed(1)}M €
+            </div>
+            ${buyButton}
+        `;
+
+                container.appendChild(card);
+            });
+
+            // Добавляем кнопку возврата к своей команде, если просматриваем чужую
+            if (teamId && teamId !== gameData.currentTeam.id) {
+                const backButton = document.createElement('button');
+                backButton.className = 'btn';
+                backButton.style.marginTop = '20px';
+                backButton.style.width = '100%';
+                backButton.textContent = 'Вернуться к своему составу';
+                backButton.onclick = () => {
+                    loadTeamPlayers();
+                };
+                container.appendChild(backButton);
+            }
+
+            // Добавляем кнопку возврата к списку всех команд, если мы не в основном режиме
+            if (teamId) {
+                const backToAllButton = document.createElement('button');
+                backToAllButton.className = 'btn';
+                backToAllButton.style.marginTop = '10px';
+                backToAllButton.style.width = '100%';
+                backToAllButton.innerHTML = '<i class="fas fa-arrow-left"></i> Назад к списку команд';
+                backToAllButton.onclick = showAllTeams;
+                container.appendChild(backToAllButton);
+            }
+        }
+
+        function showAllTeams() {
+            const container = document.getElementById('players-container');
+            container.innerHTML = '';
+
+            const header = document.createElement('div');
+            header.style.marginBottom = '20px';
+            header.style.padding = '15px';
+            header.style.background = 'linear-gradient(to right, #0039a6, #1976d2)';
+            header.style.color = 'white';
+            header.style.borderRadius = '10px';
+            header.style.textAlign = 'center';
+            header.innerHTML = '<h3><i class="fas fa-users"></i> Все команды РПЛ</h3>';
+            container.appendChild(header);
+
+            // Сортируем команды по рейтингу
+            const sortedTeams = [...gameData.teams].sort((a, b) => b.rating - a.rating);
+
+            sortedTeams.forEach(team => {
+                const teamCard = document.createElement('div');
+                teamCard.className = 'team-card';
+                teamCard.style.cursor = 'pointer';
+                teamCard.style.marginBottom = '15px';
+                teamCard.style.textAlign = 'center';
+                teamCard.onclick = () => {
+                    viewingTeamId = team.id;
+                    loadTeamPlayers(team.id);
+                };
+
+                teamCard.innerHTML = `
+            <div class="team-card-logo">
+                <img src="${team.logo}" alt="${team.name}" style="width: 60px; height: 60px;">
+            </div>
+            <div class="team-card-name" style="font-size: 1.1em; margin: 10px 0;">${team.name}</div>
+            <div style="font-size: 0.9em; color: #666;">
+                <div>Рейтинг: ${team.rating}${getStarRating(team.rating)}</div>
+                <div>Бюджет: ${team.budget.toFixed(1)}M €</div>
+                <div>Игроков: ${gameData.players.filter(p => p.team === team.id).length}</div>
+                <div>Позиция: ${team.position || '-'}</div>
+            </div>
+        `;
+
+                container.appendChild(teamCard);
+            });
+
+            // Кнопка возврата к своему составу
+            const backButton = document.createElement('button');
+            backButton.className = 'btn';
+            backButton.style.marginTop = '20px';
+            backButton.style.width = '100%';
+            backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Вернуться к своему составу';
+            backButton.onclick = () => {
+                viewingTeamId = null;
+                loadTeamPlayers();
+            };
+            container.appendChild(backButton);
+        }
+
+        function buyPlayerFromTeam(playerId, fromTeamId) {
+            const player = gameData.players.find(p => p.id === playerId);
+            const fromTeam = gameData.teams.find(t => t.id === fromTeamId);
+
+            if (!player || !fromTeam) {
+                showModal('Ошибка', 'Игрок или команда не найдены');
+                return;
+            }
+
+            if (gameData.currentTeam.budget >= player.value) {
+                // Переводим деньги
+                gameData.currentTeam.budget -= player.value;
+                fromTeam.budget += player.value;
+
+                // Перемещаем игрока
+                player.team = gameData.currentTeam.id;
+
+                showModal('Успех', `Вы купили ${player.name} у ${fromTeam.name} за ${player.value.toFixed(1)}M €!`);
+
+                // Обновляем информацию
+                updateTeamInfo();
+                loadTeamPlayers(viewingTeamId); // Обновляем просматриваемый состав
+                updateAllTeamRatings(); // Обновляем рейтинги команд
+            } else {
+                showModal('Ошибка', 'Недостаточно средств для покупки этого игрока');
             }
         }
 
@@ -2952,6 +3146,21 @@
                     }
                 }, interval);
             }
+            loadMatches(); // Обновляем календарь
+            loadLeagueTable(); // Обновляем таблицу
+            updateNextMatch(); // Обновляем следующий матч
+
+            // Включаем кнопки обратно
+            document.getElementById('play-match').disabled = false;
+            document.getElementById('simulate-match').disabled = false;
+
+            // Проверяем, все ли матчи сыграны, чтобы показать кнопку "Новый тур"
+            const currentWeekMatches = gameData.matches.filter(m => m.week === gameData.week);
+            const allMatchesPlayed = currentWeekMatches.every(m => m.played);
+
+            if (allMatchesPlayed) {
+                document.getElementById('next-week-btn').style.display = 'block';
+            }
         }
 
         // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ playMatch:
@@ -3044,6 +3253,12 @@
             if (isPlayoffMatch) {
                 gameData.currentMatch.winner = homeScore > awayScore ? gameData.currentMatch.home : gameData.currentMatch.away;
                 updateNextPlayoffStage(gameData.currentMatch);
+            } else {
+                // ДОБАВЛЕНО: симулируем матчи других команд в этом же туре
+                simulateOtherMatches();
+
+                // Обновляем турнирную таблицу
+                updateLeagueTableForMatch(gameData.currentMatch);
             }
 
             // Награда за матч
@@ -3084,13 +3299,8 @@
             // Показываем результат матча
             showModal('Матч завершен',
                 `${homeTeam.name} ${homeScore} - ${awayScore} ${awayTeam.name}
-        \nДоход: ${formatCurrency(income)}
-        \n${isWin ? 'ПОБЕДА!' : isDraw ? 'НИЧЬЯ' : 'ПОРАЖЕНИЕ'}`);
-
-            // Обновляем турнирную таблицу для регулярных матчей
-            if (!isPlayoffMatch) {
-                updateLeagueTableForMatch(gameData.currentMatch);
-            }
+\nДоход: ${formatCurrency(income)}
+\n${isWin ? 'ПОБЕДА!' : isDraw ? 'НИЧЬЯ' : 'ПОРАЖЕНИЕ'}`);
 
             // Обновляем информацию
             updateTeamInfo();
@@ -3107,7 +3317,14 @@
             // Включаем кнопки обратно
             document.getElementById('play-match').disabled = false;
             document.getElementById('simulate-match').disabled = false;
-            document.getElementById('next-week-btn').style.display = 'block';
+
+            // Проверяем, все ли матчи сыграны, чтобы показать кнопку "Новый тур"
+            const currentWeekMatches = gameData.matches.filter(m => m.week === gameData.week);
+            const allMatchesPlayed = currentWeekMatches.every(m => m.played);
+
+            if (allMatchesPlayed) {
+                document.getElementById('next-week-btn').style.display = 'block';
+            }
         }
 
         function simulateOtherMatches() {
@@ -3166,8 +3383,50 @@
                 : players[Math.floor(Math.random() * players.length)];
         }
 
+        function calculateTeamRating(teamId) {
+            const teamPlayers = gameData.players.filter(p => p.team === teamId);
+
+            if (teamPlayers.length === 0) return 0;
+
+            // Средний рейтинг игроков (основа)
+            let totalRating = teamPlayers.reduce((sum, player) => sum + player.rating, 0);
+            let averageRating = totalRating / teamPlayers.length;
+
+            // Учитываем форму игроков
+            let formBonus = teamPlayers.reduce((sum, player) => sum + (player.form - 5), 0) / 10;
+
+            // Учитываем баланс состава (наличие игроков всех позиций)
+            const positions = {
+                'GK': teamPlayers.filter(p => p.position === 'GK').length,
+                'DEF': teamPlayers.filter(p => p.position === 'DEF').length,
+                'MID': teamPlayers.filter(p => p.position === 'MID').length,
+                'ATT': teamPlayers.filter(p => p.position === 'ATT').length
+            };
+
+            let balancePenalty = 0;
+            if (positions['GK'] === 0) balancePenalty += 10;
+            if (positions['DEF'] < 3) balancePenalty += (3 - positions['DEF']) * 2;
+            if (positions['MID'] < 3) balancePenalty += (3 - positions['MID']) * 1.5;
+            if (positions['ATT'] < 2) balancePenalty += (2 - positions['ATT']) * 2;
+
+            // Финальный рейтинг
+            let finalRating = averageRating + formBonus - balancePenalty;
+
+            // Ограничиваем рейтинг (0-100)
+            return Math.max(30, Math.min(95, Math.round(finalRating)));
+        }
+
+        function updateAllTeamRatings() {
+            gameData.teams.forEach(team => {
+                team.rating = calculateTeamRating(team.id);
+            });
+        }
+
         function nextWeek() {
             // Проверяем, все ли матчи текущей недели сыграны
+            console.log('Current week:', gameData.week, 'Total matches:', gameData.matches.length);
+            console.log('Playoff status:', gameData.isPlayoff);
+
             const currentWeekMatches = gameData.matches.filter(m => m.week === gameData.week);
             const allMatchesPlayed = currentWeekMatches.every(m => m.played);
 
@@ -3182,18 +3441,22 @@
                 return;
             }
 
+            // СИМУЛИРУЕМ МАТЧИ ДРУГИХ КОМАНД В ТЕКУЩЕМ ТУРЕ
+            //simulateOtherMatches();
+
             // Переходим к следующей неделе регулярного сезона
             gameData.week++;
 
-            // Проверяем, не превысили ли максимальное количество недель
-            const maxWeeks = Math.max(...gameData.matches.map(m => m.week));
-            if (gameData.week > maxWeeks) {
+            // Проверяем, не завершился ли регулярный сезон (30 туров для РПЛ)
+            if (gameData.week > 30) {
                 // Регулярный сезон завершен, начинаем плей-офф
-                if (!gameData.isPlayoff) {
-                    initPlayoff();
-                    gameData.isPlayoff = true;
-                    showModal('Регулярный сезон', 'Регулярный сезон завершен! Начинается плей-офф за Кубок России.');
-                }
+                initPlayoff();
+                gameData.isPlayoff = true;
+                showModal('Регулярный сезон', 'Регулярный сезон завершен! Начинается плей-офф за Кубок России.');
+
+                // Обновляем интерфейс
+                //updateNextMatch();
+                loadPlayoffBracket();
                 return;
             }
 
@@ -3202,6 +3465,7 @@
             loadMatches();
             loadLeagueTable();
             updateNextMatch();
+            updateAllTeamRatings();
 
             showModal('Новая неделя', `Начинается тур ${gameData.week}!`);
         }
@@ -3254,15 +3518,20 @@
                 const homeStrength = calculateTeamStrength(homePlayers);
                 const awayStrength = calculateTeamStrength(awayPlayers);
 
+                // Домашнее преимущество
+                const homeAdvantage = 1.1;
+
                 let homeScore = 0;
                 let awayScore = 0;
 
-                // Реалистичная симуляция
-                const totalEvents = 6 + Math.floor(Math.random() * 6); // 6-11 событий
+                // Реалистичная симуляция с учетом силы команд
+                const totalEvents = 6 + Math.floor(Math.random() * 6);
 
                 for (let i = 0; i < totalEvents; i++) {
                     const isHomeEvent = Math.random() < 0.5;
-                    const chance = isHomeEvent ? homeStrength / 150 : awayStrength / 150;
+                    const chance = isHomeEvent ?
+                        (homeStrength * homeAdvantage) / 150 :
+                        awayStrength / 150;
 
                     if (Math.random() < chance) {
                         if (isHomeEvent && homeScore < 4) homeScore++;
@@ -3338,8 +3607,24 @@
         function calculateTeamStrength(players) {
             let strength = 0;
             players.forEach(player => {
-                strength += player.rating;
+                // Учитываем рейтинг, форму и возраст игрока
+                let playerStrength = player.rating;
+                playerStrength += (player.form - 5) * 2; // Форма влияет на силу
+                if (player.age < 23) playerStrength += 2; // Молодые игроки
+                if (player.age > 32) playerStrength -= 3; // Ветераны
+
+                strength += playerStrength;
             });
+
+            // Также учитываем общий рейтинг команды
+            const teamId = players[0]?.team;
+            if (teamId) {
+                const team = gameData.teams.find(t => t.id === teamId);
+                if (team) {
+                    strength *= (1 + team.rating / 200);
+                }
+            }
+
             return strength / players.length;
         }
 
@@ -3379,12 +3664,24 @@
             updateTeamInfo();
         }
 
+        function getStarRating(rating) {
+            const fullStars = Math.floor(rating / 20);
+            const halfStar = rating % 20 >= 10 ? 1 : 0;
+            const emptyStars = 5 - fullStars - halfStar;
+
+            let stars = '';
+            for (let i = 0; i < fullStars; i++) stars += '★';
+            if (halfStar) stars += '⯨';
+            for (let i = 0; i < emptyStars; i++) stars += '☆';
+
+            return ` ${stars}`;
+        }
+
         function toggleCalendar() {
             const content = document.getElementById('calendar-content');
             const icon = document.querySelector('.calendar-toggle i');
 
             if (content && icon) {
-                content.classList.toggle('visible');
                 content.classList.toggle('hidden');
                 icon.style.transform = content.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
             }
@@ -3672,8 +3969,9 @@
 
             // Сбрасываем неделю
             gameData.week = 1;
-            gameData.isPlayoff = false;
+            gameData.isPlayoff = false; // ← ЭТА СТРОКА ОЧЕНЬ ВАЖНА!
 
+            // Остальной код функции остается без изменений...
             // Сбрасываем турнирную таблицу
             gameData.leagueTable.forEach(team => {
                 team.played = 0;
@@ -3717,6 +4015,7 @@
             loadMatches();
             loadLeagueTable();
             updateNextMatch();
+            updateAllTeamRatings();
 
             showModal('Новый сезон', `Начинается сезон ${gameData.season}! Удачи!`);
         }
@@ -3821,8 +4120,8 @@
                         matchDiv.classList.add('my-team');
                     }
 
-                    let homeName = homeTeam ? homeTeam.name : 'TBD';
-                    let awayName = awayTeam ? awayTeam.name : 'TBD';
+                    let homeName = homeTeam ? `${homeTeam.name} (${homeTeam.rating}★)` : 'TBD';
+                    let awayName = awayTeam ? `${awayTeam.name} (${awayTeam.rating}★)` : 'TBD';
 
                     if (match.played) {
                         const homeClass = match.winner === match.home ? 'winner' : '';
@@ -3847,61 +4146,6 @@
                 container.appendChild(roundDiv);
             });
         }
-
-        //function loadPlayoffBracket() {
-        //    const container = document.getElementById('playoff-bracket');
-        //    container.innerHTML = '';
-
-        //    const rounds = ['quarter', 'semi', 'final'];
-
-        //    rounds.forEach(round => {
-        //        const roundDiv = document.createElement('div');
-        //        roundDiv.className = 'playoff-round';
-
-        //        const title = document.createElement('div');
-        //        title.className = 'round-title';
-
-        //        if (round === 'quarter') title.textContent = 'Четвертьфиналы';
-        //        else if (round === 'semi') title.textContent = 'Полуфиналы';
-        //        else title.textContent = 'Финал';
-
-        //        roundDiv.appendChild(title);
-
-        //        const roundMatches = gameData.playoffMatches.filter(m => m.round === round);
-
-        //        roundMatches.forEach(match => {
-        //            const homeTeam = gameData.teams.find(t => t.id === match.home);
-        //            const awayTeam = gameData.teams.find(t => t.id === match.away);
-
-        //            const matchDiv = document.createElement('div');
-        //            matchDiv.className = 'playoff-match';
-
-        //            let homeName = match.home ? homeTeam.name : 'TBD';
-        //            let awayName = match.away ? awayTeam.name : 'TBD';
-
-        //            if (match.played) {
-        //                const homeClass = match.homeScore > match.awayScore ? 'winner' : '';
-        //                const awayClass = match.awayScore > match.homeScore ? 'winner' : '';
-
-        //                matchDiv.innerHTML = `
-        //                        <div class="playoff-team ${homeClass}">${homeName}</div>
-        //                        <div class="playoff-score">${match.homeScore} - ${match.awayScore}</div>
-        //                        <div class="playoff-team ${awayClass}">${awayName}</div>
-        //                    `;
-        //            } else {
-        //                matchDiv.innerHTML = `
-        //                        <div class="playoff-team">${homeName}</div>
-        //                        <div class="playoff-score">vs</div>
-        //                        <div class="playoff-team">${awayName}</div>
-        //                    `;
-        //            }
-
-        //            roundDiv.appendChild(matchDiv);
-        //        });
-
-        //        container.appendChild(roundDiv);
-        //    });
-        //}
 
         function updateTacticsPitch() {
             const pitch = document.getElementById('pitch');
@@ -4232,11 +4476,12 @@
                 gameData.players = data.players;
                 gameData.matches = data.matches;
                 gameData.leagueTable = data.leagueTable;
-                gameData.playoffMatches = data.playoffMatches;
+                gameData.playoffMatches = data.playoffMatches || []; // ← Добавьте значение по умолчанию
                 gameData.week = data.week;
                 gameData.season = data.season;
-                gameData.isPlayoff = data.isPlayoff;
+                gameData.isPlayoff = data.isPlayoff || false; // ← Добавьте значение по умолчанию
 
+                updateAllTeamRatings(); // Добавьте эту строку
                 return true;
             } catch (e) {
                 console.error('Ошибка загрузки игры:', e);
