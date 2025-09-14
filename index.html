@@ -2494,8 +2494,13 @@
 
             // В конец loadMatches добавить:
             const calendarContent = document.getElementById('calendar-content');
-            if (calendarContent && !calendarContent.classList.contains('hidden')) {
-                calendarContent.classList.add('hidden');
+            if (calendarContent) {
+                calendarContent.classList.remove('hidden'); // Убираем класс hidden
+                // Обновляем иконку стрелки
+                const calendarToggle = document.querySelector('.calendar-toggle i');
+                if (calendarToggle) {
+                    calendarToggle.style.transform = 'rotate(180deg)';
+                }
             }
         }
 
