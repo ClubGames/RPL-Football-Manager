@@ -928,6 +928,13 @@
                 margin-left: 10px;
             }
 
+        .team-card-rating {
+            font-size: 0.9rem;
+            color: #0039a6;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -2027,9 +2034,9 @@
                 gameData.gameState = 'menu';
             });
 
-            //document.getElementById('next-week-btn').addEventListener('click', function () {
-            //    nextWeek();
-            //});
+            document.getElementById('next-week-btn').addEventListener('click', function () {
+                nextWeek();
+            });
 
             document.getElementById('main-menu-btn').addEventListener('click', function () {
                 showScreen('main-menu');
@@ -2053,6 +2060,9 @@
                     showModal('Выбор команды', 'Пожалуйста, выберите команду для управления');
                     return;
                 }
+
+                // Обновляем рейтинги всех команд
+                updateAllTeamRatings(); // Добавьте эту строку
 
                 // Инициализация данных игры
                 initGameData();
@@ -2313,19 +2323,22 @@
             const container = document.getElementById('teams-container');
             container.innerHTML = '';
 
+            // Обновляем рейтинги перед отображением
+            updateAllTeamRatings(); // Добавьте эту строку
+
             gameData.teams.forEach(team => {
                 const card = document.createElement('div');
                 card.className = 'team-card';
                 card.setAttribute('data-team', team.id);
                 card.innerHTML = `
-                <div class="team-card-logo">
-                    <img src="${team.logo}" alt="${team.name}">
-                </div>
-                <div class="team-card-name">${team.name}</div>
-                <div class="team-card-budget">Бюджет: ${team.budget}M €</div>
-            `;
+            <div class="team-card-logo">
+                <img src="${team.logo}" alt="${team.name}">
+            </div>
+            <div class="team-card-name">${team.name}</div>
+            <div class="team-card-budget">Бюджет: ${team.budget}M €</div>
+            <div class="team-card-rating">Рейтинг: ${team.rating}</div> <!-- Добавлена строка -->
+        `;
 
-                // Добавляем обработчик события сразу при создании карточки
                 card.addEventListener('click', function () {
                     document.querySelectorAll('.team-card').forEach(c => c.classList.remove('selected'));
                     this.classList.add('selected');
@@ -2368,6 +2381,8 @@
 
             // Генерируем правильное расписание
             const schedule = generateSchedule(teamIds);
+
+            updateAllTeamRatings();
 
             // Создаем матчи на основе расписания
             for (let week = 0; week < schedule.length; week++) {
@@ -2457,9 +2472,9 @@
             document.getElementById('current-team-logo-img').alt = gameData.currentTeam.name;
             document.getElementById('current-team-name').textContent = gameData.currentTeam.name;
             document.getElementById('current-budget').textContent = gameData.currentTeam.budget.toFixed(1);
-            document.getElementById('current-rating').textContent = gameData.currentTeam.rating;
-            document.getElementById('current-rating').innerHTML += getStarRating(gameData.currentTeam.rating);
 
+            // Убедитесь, что используете rating, а не rating || 0
+            document.getElementById('current-rating').textContent = gameData.currentTeam.rating;
 
             updateTeamPosition();
             document.getElementById('finance-budget').textContent = gameData.currentTeam.budget.toFixed(1) + 'M €';
@@ -3388,14 +3403,19 @@
 
             if (teamPlayers.length === 0) return 0;
 
-            // Средний рейтинг игроков (основа)
-            let totalRating = teamPlayers.reduce((sum, player) => sum + player.rating, 0);
-            let averageRating = totalRating / teamPlayers.length;
+            // Средний рейтинг игроков (взвешенный по форме)
+            let totalRating = 0;
+            let totalWeight = 0;
 
-            // Учитываем форму игроков
-            let formBonus = teamPlayers.reduce((sum, player) => sum + (player.form - 5), 0) / 10;
+            teamPlayers.forEach(player => {
+                const weight = player.form / 10; // Форма влияет на вес игрока
+                totalRating += player.rating * weight;
+                totalWeight += weight;
+            });
 
-            // Учитываем баланс состава (наличие игроков всех позиций)
+            let averageRating = totalWeight > 0 ? totalRating / totalWeight : 0;
+
+            // Учитываем баланс состава
             const positions = {
                 'GK': teamPlayers.filter(p => p.position === 'GK').length,
                 'DEF': teamPlayers.filter(p => p.position === 'DEF').length,
@@ -3403,16 +3423,16 @@
                 'ATT': teamPlayers.filter(p => p.position === 'ATT').length
             };
 
-            let balancePenalty = 0;
-            if (positions['GK'] === 0) balancePenalty += 10;
-            if (positions['DEF'] < 3) balancePenalty += (3 - positions['DEF']) * 2;
-            if (positions['MID'] < 3) balancePenalty += (3 - positions['MID']) * 1.5;
-            if (positions['ATT'] < 2) balancePenalty += (2 - positions['ATT']) * 2;
+            let balanceBonus = 0;
+            if (positions['GK'] >= 1) balanceBonus += 5;
+            if (positions['DEF'] >= 4) balanceBonus += 5;
+            if (positions['MID'] >= 4) balanceBonus += 5;
+            if (positions['ATT'] >= 2) balanceBonus += 5;
 
             // Финальный рейтинг
-            let finalRating = averageRating + formBonus - balancePenalty;
+            let finalRating = averageRating + balanceBonus;
 
-            // Ограничиваем рейтинг (0-100)
+            // Ограничиваем рейтинг (30-95)
             return Math.max(30, Math.min(95, Math.round(finalRating)));
         }
 
@@ -3671,10 +3691,10 @@
 
             let stars = '';
             for (let i = 0; i < fullStars; i++) stars += '★';
-            if (halfStar) stars += '⯨';
+            for (let i = 0; i < halfStar; i++) stars += '⯨';
             for (let i = 0; i < emptyStars; i++) stars += '☆';
 
-            return ` ${stars}`;
+            return stars;
         }
 
         function toggleCalendar() {
